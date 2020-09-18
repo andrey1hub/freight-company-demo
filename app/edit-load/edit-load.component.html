@@ -1,0 +1,110 @@
+<h3>{{ loadId ? 'Edit load ID: ' : 'Create new load' }}{{ loadId }}</h3>
+<form [formGroup]="form" (ngSubmit)="onFormSubmit()">
+  <div class="container-xl">
+    <div *ngIf="showErrorMessage" class="alert alert-danger mb-0 app-row" role="alert">
+      <h5>Load ID: {{ loadId }} not&nbsp;found in DB</h5>
+    </div>
+    <div *ngIf="loadId" class="row">
+      <div class="col-md-6 mb-sm-3">
+        <div class="row mr-md-0">
+          <div class="col-sm-4 p-0 pr-sm-3 pt-2"><label for="selectStatus">Status:</label></div>
+          <div class="col-sm-8 p-0">
+            <input type="hidden" formControlName="formed">
+            <select class="form-control" id="selectStatus" formControlName="status">
+              <option *ngFor="let status of settings.statuses" [ngValue]="status.id" value="{{ status.id }}">{{ status | title }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-sm-3">
+        <div class="row mr-md-0">
+          <div class="col-sm-4 p-0 pr-sm-3 pt-2"><label for="selectFromDepartment">From:</label></div>
+          <div class="col-sm-8 p-0">
+            <select class="form-control" id="selectFromDepartment" formControlName="fromDepartment">
+              <option *ngFor="let department of settings.departments" [ngValue]="department.id" value="{{ department.id }}">{{ department | title }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-sm-3">
+        <div class="row ml-md-0">
+          <div class="col-sm-4 p-0 pr-sm-3 pt-2"><label for="selectToDepartment">To:</label></div>
+          <div class="col-sm-8 p-0">
+            <select class="form-control" id="selectToDepartment" formControlName="toDepartment">
+              <option *ngFor="let department of settings.departments" [ngValue]="department.id" value="{{ department.id }}">{{ department | title }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 mb-sm-3">
+        <div class="row mr-md-0">
+          <div class="col-sm-4 p-0 pr-sm-3 pt-2"><label for="selectService">Service:</label></div>
+          <div class="col-sm-8 p-0">
+            <select class="form-control" id="selectService" formControlName="service">
+              <option *ngFor="let service of settings.services" [ngValue]="service.id" value="{{ service.id }}">{{ service | title }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-sm-3">
+        <div class="row ml-md-0">
+          <div class="col-sm-4 p-0 pr-sm-3 pt-2"><label for="selectPackaging">Packaging:</label></div>
+          <div class="col-sm-8 p-0">
+            <select class="form-control" id="selectPackaging" formControlName="packaging">
+              <option *ngFor="let packaging of settings.packagings" [ngValue]="packaging.id" value="{{ packaging.id }}">{{ packaging | title }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-2 mb-sm-3">
+        <div class="app-row mr-sm-0">
+          <div class="pt-2 pt-sm-0"><label for="inputLength">Length:</label></div>
+          <div>
+            <input type="text" formControlName="length" class="form-control" id="inputLength" placeholder="n...n.n, cm">
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-2 mb-sm-3">
+        <div class="app-row mr-sm-0">
+          <div class="pt-2 pt-sm-0"><label for="inputWidth">Width:</label></div>
+          <div>
+            <input type="text" formControlName="width" class="form-control" id="inputWidth" placeholder="n...n.n, cm">
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-2 mb-sm-3">
+        <div class="app-row mr-sm-0">
+          <div class="pt-2 pt-sm-0"><label for="inputHeight">Height:</label></div>
+          <div>
+            <input type="text" formControlName="height" class="form-control" id="inputHeight" placeholder="n...n.n, cm">
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-3 mb-sm-3">
+        <div class="app-row mr-sm-0">
+          <div class="pt-2 pt-sm-0"><label for="inputWeight">Weight:</label></div>
+          <div>
+            <input type="text" formControlName="weight" class="form-control" id="inputWeight" placeholder="n...n.n, kg">
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-3 mb-sm-3">
+        <div class="app-row">
+          <div class="pt-2 pt-sm-0"><label for="inputDeclaredCost">Declared Cost:</label></div>
+          <div>
+            <input type="text" formControlName="declaredCost" class="form-control" id="inputDeclaredCost" placeholder="n...n.nn, USD">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="w-50 pt-3 pt-sm-0 mx-auto">
+      <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">{{ loadId ? 'Edit' : 'Create' }} Load</button>
+    </div>
+  </div>
+</form>

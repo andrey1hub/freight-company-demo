@@ -1,0 +1,19 @@
+<h3>Settings</h3>
+<form [formGroup]="form" (ngSubmit)="onFormSubmit()">
+  <div class="container-xl">
+    <div *ngIf="showSuccessMessage" class="alert alert-success app-row mb-0 text-center" role="alert">
+      Saved
+    </div>
+    <div class="row">
+      <div class="col-sm-4 px-0 pt-2"><label>Current department:</label></div>
+      <div class="col-sm-8 px-0">
+        <select class="form-control" id="selectCurrentDepartment" formControlName="currentDepartment">
+          <option *ngFor="let department of settings.departments" [ngValue]="department.id" value="{{ department.id }}">{{ department | title }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="w-50 pt-3 mx-auto">
+      <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">Save</button>
+    </div>
+  </div>
+</form>
