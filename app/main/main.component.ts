@@ -1,9 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { DataService } from '../data.service';
-import { LoadService, LoadsSummary } from '../load.service';
-import { SettingsListData, SettingsService } from '../settings.service';
+
+import { LoadService } from '../load.service';
+import { SettingsService } from '../settings.service';
+import { UtilityService } from 'src/app/utility.service';
+import { MainData } from '../models/main-data.system';
+import { mainItemsData } from '../data/main-items';
+import { MainItemStaticData } from '../models/main-item-static-data.system';
+import { MainItemSelectableData } from '../models/main-item-selectable-data.system';
+import { options } from '../data/options';
+import { LoadsSummary } from '../models/loads-summary.public';
+import { SettingsListData } from '../models/settings-list-data.system';
 
 @Component({
   selector: 'app-main',
@@ -11,72 +17,28 @@ import { SettingsListData, SettingsService } from '../settings.service';
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
-  settings: SettingsListData
-  summary: LoadsSummary
-  form: FormGroup
-  showTotalByDepartment: Number
-  showTotalByService: Number
-  showTotalByPackaging: Number
-  appName: String = DataService.APP_NAME
-  appVersion: String = DataService.APP_VERSION
+  mainData: MainData
+  mainStaticItemsData: Array<Array<MainItemStaticData>> = UtilityService.uniqueCopy(mainItemsData.static)
+  mainSelectableItemsData: Array<MainItemSelectableData> = UtilityService.uniqueCopy(mainItemsData.selectable)
+  appName: string = UtilityService.APP_NAME
+  appVersion: string = UtilityService.APP_VERSION
 
   constructor(private settingsService: SettingsService, private loadService: LoadService) { }
 
   ngOnInit(): void {
-    let scope: MainComponent = this
-    let subscription: Subscription = this.settingsService.readSettings().subscribe({
-      next(settingsData) {
-        scope.settings = settingsData.data
-
-        scope.form.reset({
-          department: scope.settings.departments[0].id,
-          service: scope.settings.services[0].id,
-          packaging: scope.settings.packagings[0].id
-        })
-      },
-      complete() {
-        subscription.unsubscribe()
+    this.settingsService.readSettings(
+      (settingsData: SettingsListData) => {
+        this.mainData = { ...this.mainData, ...UtilityService.uniqueCopy(options), ...settingsData }
       }
-    })
-
-    this.form = new FormGroup({
-      department: new FormControl(''),
-      service: new FormControl(''),
-      packaging: new FormControl('')
-    })
-    this.form.controls.department.valueChanges.subscribe({
-      next(newValue) {
-        scope.showTotalByDepartment = scope.summary && (scope.summary.totalByDepartment[newValue] || 0)
-      }
-    })
-    this.form.controls.service.valueChanges.subscribe({
-      next(newValue) {
-        scope.showTotalByService = scope.summary && (scope.summary.totalByService[newValue] || 0)
-      }
-    })
-    this.form.controls.packaging.valueChanges.subscribe({
-      next(newValue) {
-        scope.showTotalByPackaging = scope.summary && (scope.summary.totalByPackaging[newValue] || 0)
-      }
-    })
+    )
 
     this.getLoadsSummary()
   }
   getLoadsSummary() {
-    let scope: MainComponent = this
-    let subscription: Subscription = this.loadService.getLoadsSummary().subscribe({
-      next(summaryData) {
-        // Convert cm3 => m3
-        summaryData.totalVolume = summaryData.totalVolume / 1000000
-        scope.summary = summaryData
-
-        scope.showTotalByDepartment = scope.summary.totalByDepartment[scope.settings.departments[0].id as string] || 0
-        scope.showTotalByService = scope.summary.totalByService[scope.settings.services[0].id as string] || 0
-        scope.showTotalByPackaging = scope.summary.totalByPackaging[scope.settings.packagings[0].id as string] || 0
-      },
-      complete() {
-        subscription.unsubscribe()
-      }
+    this.loadService.readLoadsSummary((summaryData: LoadsSummary) => {
+      // Convert cm3 => m3
+      summaryData.totalVolume = summaryData.totalVolume / 1000000
+      this.mainData = { ...this.mainData, ...summaryData }
     })
   }
 

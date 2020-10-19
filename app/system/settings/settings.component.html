@@ -1,0 +1,11 @@
+<form [formGroup]="form" (ngSubmit)="onFormSubmit()">
+  <div class="container-xl">
+    <div *ngIf="showSuccessMessage" class="alert alert-success app-row text-center" role="alert">
+      Saved
+    </div>
+    <app-item-select *ngFor="let item of selectsData" [data]="item" [stack]="options[item.stackId]" (controlOutputEvent)="addFormControl($event)"></app-item-select>
+    <div class="w-50 pt-3 mx-auto">
+      <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">Save</button>
+    </div>
+  </div>
+</form>

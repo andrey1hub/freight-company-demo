@@ -1,0 +1,9 @@
+<div class="row">
+  <div class="col-12 px-0 mb-1 font-weight-bolder">{{ label }}:</div>
+  <div class="col-8 px-0">
+    <select *ngIf="options" class="form-control" [formControl]="control">
+      <option *ngFor="let item of options" [ngValue]="item.id" value="{{ item.id }}">{{ item | title }}</option>
+    </select>
+  </div>
+  <div class="col-4 px-0 pt-2 text-center">{{ showTotal }}</div>
+</div>

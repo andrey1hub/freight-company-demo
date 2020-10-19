@@ -64,13 +64,9 @@
         </div>
       </div>
       <div class="app-row clearfix pt-2">
-        <div *ngIf="load.status.id === loadInStorageStatusId" class="btn-group btn-group-lg float-right" role="group" aria-label="Load controls">
-          <a routerLink="/loads/{{ loadId }}/edit" class="btn btn-light px-5">Edit</a>
-          <a routerLink="/loads/{{ loadId }}" (click)="deleteLoad()" class="btn btn-warning">Delete</a>
-        </div>
-        <div *ngIf="load.status.id !== loadInStorageStatusId" class="btn-group btn-group-lg float-right" role="group" aria-label="Load controls disabled">
-          <button disabled class="btn btn-light px-5">Edit</button>
-          <button disabled class="btn btn-warning">Delete</button>
+        <div class="btn-group btn-group-lg float-right" role="group" aria-label="Load controls">
+          <button [disabled]="load.status.id !== loadInStorageStatusId" routerLink="/loads/{{ loadId }}/edit" class="btn btn-light px-5">Edit</button>
+          <button [disabled]="load.status.id !== loadInStorageStatusId" routerLink="/loads/{{ loadId }}" (click)="deleteLoad()" class="btn btn-warning">Delete</button>
         </div>
       </div>
     </div>

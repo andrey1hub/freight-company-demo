@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
 
-import { LoadResponseEntryData, LoadService } from '../load.service';
+import { LoadService } from '../load.service';
+import { LoadEntryFullData } from '../models/load-entry-full-data.public';
 
 @Component({
   selector: 'app-load',
@@ -10,11 +10,11 @@ import { LoadResponseEntryData, LoadService } from '../load.service';
   styleUrls: ['./load.component.scss']
 })
 export class LoadComponent implements OnInit {
-  loadId: String
-  load: LoadResponseEntryData
-  loadInStorageStatusId: String = '1'
-  showLoad: Boolean = false
-  showErrorMessage: Boolean = false
+  loadId: string
+  load: LoadEntryFullData
+  loadInStorageStatusId: string = '1'
+  showLoad: boolean = false
+  showErrorMessage: boolean = false
 
   constructor(
     private router: Router,
@@ -25,39 +25,29 @@ export class LoadComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.loadId = params.get('loadId')
-      this.readLoad(this.loadId)
+      this.readLoad()
     })
   }
-  readLoad(loadId: String) {
-    let scope: LoadComponent = this
-    let subscription: Subscription = this.loadService.readLoad(loadId).subscribe({
-      next(loadData) {
+  readLoad() {
+    this.loadService.readLoad(
+      (loadData: LoadEntryFullData) => {
         if (loadData) {
-          scope.load = loadData.data
-          scope.showLoad = true
+          this.load = loadData
+          this.showLoad = true
         } else {
-          scope.load = null
-          scope.showErrorMessage = true
+          this.load = null
+          this.showErrorMessage = true
         }
       },
-      complete() {
-        subscription.unsubscribe()
-      }
-    })
+      { id: this.loadId }
+    )
   }
   deleteLoad() {
-    let scope: LoadComponent = this
-    let subscription: Subscription
-
     if (window.confirm('Are you sure you want delete this load?')) {
-      subscription = this.loadService.deleteLoad(this.loadId).subscribe({
-        next(isDeleted) {
-          if (isDeleted) scope.router.navigate(['loads'])
-        },
-        complete() {
-          subscription.unsubscribe()
-        }
-      })
+      this.loadService.deleteLoad(
+        (isDeleted: boolean) => { if (isDeleted) this.router.navigate(['loads']) },
+        { id: this.loadId }
+      )
     }
   }
 

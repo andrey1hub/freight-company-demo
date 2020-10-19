@@ -1,92 +1,189 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Subscriber } from 'rxjs';
 
-import { options } from './options';
+import { options } from './data/options';
+
+const initialSettings: Array<DBSettingsEntryData> = [
+  {
+    id: '',
+    property: 'currentDepartment',
+    value: '1982543442'
+  }
+]
+const DB_REVISION: number = 1
 
 @Injectable({
   providedIn: 'root'
 })
 export class MockBackendService {
+  private validDbRevisions: Array<number> = [1]
   private db: Storage = window.localStorage
-  private mockUIDGenerator(): String {
-    let letters: Array<String> = [
+  private checkDbRev(): boolean {
+    let dbRev: number = parseInt(this.readDBTable('DB_REVISION') || '0')
+    let check: boolean = false
+
+    if (!dbRev) {
+      this.updateDBTable('DB_REVISION', '' + DB_REVISION)
+      check = true
+    } else {
+      check = this.validDbRevisions.includes(dbRev)
+    }
+    return check
+  }
+  private unique(data: any): any {
+    return data && JSON.parse(JSON.stringify(data))
+  }
+  private mockUIDGenerator(): string {
+    let letters: Array<string> = [
       'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
       'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
     ]
-    let uid: String = ''
+    let uid: string = ''
     for (let i = 1; i <= 10; i++) {
-      uid = uid.concat(letters[Math.floor(Math.random() * 52)] as string)
+      uid = uid.concat(this.randomItemOfStackPicker(letters))
     }
     return uid
   }
   private mockResponseDelay(f: Function) {
-    // setTimeout(f, 1000)
-    setTimeout(f, 0)
+    setTimeout(f, 1000)
+    // setTimeout(f, 0)
   }
-  private createRow(requestData: RequestData): String {
-    let raw: String = this.readDBTable(requestData.type)
-    let parsed: Array<Object>
-    let id: String = this.mockUIDGenerator()
+  private randomItemOfStackPicker(stack: Array<any> | number): any {
+    return typeof stack === 'number' ? Math.floor(Math.random() * stack) + 1 : stack.length && stack[Math.floor(Math.random() * stack.length)]
+  }
+  private execCommand(requestData: RequestCommandData): boolean {
+    switch (requestData.data.command) {
+      case 'generate':
+        return this.processGenerateComm(requestData.type, requestData.data.options)
+        break;
+
+      default:
+        return null
+        break;
+    }
+  }
+  private processGenerateComm(type: string, commandOptions: CommandOptions): boolean {
+    if (
+      commandOptions.formedSpanStart && commandOptions.formedSpanEnd &&
+      commandOptions.formedSpanStart.getTime() > commandOptions.formedSpanEnd.getTime()
+    ) commandOptions.formedSpanStart = null
+    let formedSpanEnd: Date = commandOptions.formedSpanEnd || new Date()
+    let formedSpanStart: Date = commandOptions.formedSpanStart || new Date(formedSpanEnd.getTime() - 30 * 24 * 60 * 60 * 1000)
+    let quantity: number = commandOptions.quantity || 100
+    let dbIdPrefix: string = commandOptions.dbIdPrefix || 'demo'
+    let collection: Array<DBLoadEntryData> = []
+    let ids: Array<string> = []
+    let settingsFromDB: ResponseSettingsCollectionData = this.readAnyTypeAnyEntity({
+      action: 'read',
+      type: 'settings',
+      entity: 'collection',
+      data: {}
+    }) as ResponseSettingsCollectionData
+    let currentDepartment: string = settingsFromDB.data.find(item => item.property === 'currentDepartment').value
+
+    for (let i = 0; i < quantity; i++) {
+      let fromDepartment: string = this.randomItemOfStackPicker(options.departments).id
+      let toDepartment: string
+      let entry: any
+
+      if (fromDepartment === currentDepartment) {
+        toDepartment = this.randomItemOfStackPicker(options.departments).id
+      } else {
+        toDepartment = currentDepartment
+      }
+
+      entry = {
+        status: '1',
+        formed: '' + (formedSpanStart.getTime() + this.randomItemOfStackPicker(formedSpanEnd.getTime() - formedSpanStart.getTime())),
+        fromDepartment: fromDepartment,
+        toDepartment: toDepartment,
+        packaging: this.randomItemOfStackPicker(options.packagings).id,
+        service: this.randomItemOfStackPicker(options.services).id,
+        declaredCost: '' + this.randomItemOfStackPicker(100000),
+        height: '' + this.randomItemOfStackPicker(1000),
+        length: '' + this.randomItemOfStackPicker(1000),
+        weight: '' + this.randomItemOfStackPicker(1000),
+        width: '' + this.randomItemOfStackPicker(1000)
+      }
+      collection.push(entry)
+    }
+    ids = this.createRowsList(type, collection, dbIdPrefix, 'formed').map(item => item.id)
+
+    return ids.length === collection.length
+  }
+  private createRow(requestData: RequestData, dbIdPrefix?: string, sortType?: string): string {
+    let raw: string = this.readDBTable(requestData.type)
+    let parsed: Array<DBEntryData>
+    let id: string = this.mockUIDGenerator()
+    let sortHandlers: SortHandlers = {
+      formed: (first: DBLoadEntryData, second: DBLoadEntryData) => parseInt(first.formed) - parseInt(second.formed)
+    }
 
     if (!raw) {
       parsed = []
     } else {
-      parsed = JSON.parse(raw as string)
+      parsed = JSON.parse(raw)
     }
+    if (dbIdPrefix) id = dbIdPrefix.concat('_').concat(id)
+
     parsed.push({ ...requestData.data, id })
+
+    if (typeof sortType === 'string' &&
+      typeof sortHandlers[sortType] === 'function') parsed.sort(sortHandlers[sortType])
+
     this.updateDBTable(requestData.type, JSON.stringify(parsed))
 
     return id
   }
-  private createRowsList(parsed: Array<DBEntryData>): Array<DBEntryData> {
-    return parsed.map(item => {
-      item.id = this.createRow({
+  private createRowsList(type: string, parsed: Array<DBEntryData>, dbIdPrefix?: string, sortType?: string): Array<DBEntryData> {
+    return this.unique(parsed).map((data: DBEntryData) => {
+      data.id = this.createRow({
         action: 'create',
-        type: 'settings',
+        type,
         entity: 'entry',
-        data: item
-      })
-      return item
+        data
+      }, dbIdPrefix, sortType)
+      return data
     })
   }
-  private readRow(table: String, id: String): DBEntryData {
-    let raw: String = this.readDBTable(table)
+  private readRow(table: string, id: string): DBEntryData {
+    let raw: string = this.readDBTable(table)
     let parsed: Array<DBEntryData>
     let entry: DBEntryData
 
     if (raw) {
-      parsed = JSON.parse(raw as string)
+      parsed = JSON.parse(raw)
       entry = this.getCollectionEntryById(parsed, id)
     }
     return entry
   }
-  private updateRow(requestData: RequestEntryData): String {
-    let raw: String = this.readDBTable(requestData.type)
-    let parsed: Array<Object>
+  private updateRow(requestData: RequestEntryData): string {
+    let raw: string = this.readDBTable(requestData.type)
+    let parsed: Array<DBEntryData>
 
-    parsed = JSON.parse(raw as string).map((item: DBEntryData) =>
+    parsed = JSON.parse(raw).map((item: DBEntryData) =>
       (item.id === requestData.data.id ? requestData.data : item)
     )
     this.updateDBTable(requestData.type, JSON.stringify(parsed))
     return requestData.data.id
   }
-  private deleteRow(requestData: RequestEntryData): Boolean {
-    let raw: String = this.readDBTable(requestData.type)
-    let parsed: Array<Object>
+  private deleteRow(requestData: RequestEntryData): boolean {
+    let raw: string = this.readDBTable(requestData.type)
+    let parsed: Array<DBEntryData>
 
-    parsed = JSON.parse(raw as string).map((item: DBEntryData) =>
+    parsed = JSON.parse(raw).filter((item: DBEntryData) =>
       (item.id === requestData.data.id ? false : item)
-    ).filter((item: DBLoadEntryData) => item)
+    )
     this.updateDBTable(requestData.type, JSON.stringify(parsed))
     return true
   }
-  private readDBTable(name: String): String {
-    return this.db.getItem(name as string) as String
+  private readDBTable(name: string): string {
+    return this.db.getItem(name)
   }
-  private updateDBTable(name: String, stringified: String) {
-    this.db.setItem(name as string, stringified as string)
+  private updateDBTable(name: string, stringified: string) {
+    this.db.setItem(name, stringified)
   }
-  private createAnyTypeRow(requestData: RequestData): String {
+  private createAnyTypeRow(requestData: RequestData): string {
     switch (requestData.type) {
       case 'settings':
         return this.createRow(requestData)
@@ -100,7 +197,7 @@ export class MockBackendService {
         break;
     }
   }
-  private createLoadRow(requestData: RequestEntryData): String {
+  private createLoadRow(requestData: RequestLoadEntryData): string {
     requestData.data.formed = '' + (new Date()).getTime()
     requestData.data.status = '1'
     return this.createRow(requestData)
@@ -124,19 +221,13 @@ export class MockBackendService {
     }
   }
   private readCollectionData(requestData: RequestData): ResponseCollectionData {
-    let raw: String = this.readDBTable(requestData.type)
-    let parsed: Array<any> = JSON.parse(raw as string)
+    let raw: string = this.readDBTable(requestData.type)
+    let parsed: Array<any> = JSON.parse(raw)
     switch (requestData.type) {
       case 'settings':
         return {
           type: requestData.type,
-          data: {
-            main: this.getSettingsEntriesWithTitles(parsed),
-            departments: options.departments,
-            services: options.services,
-            packagings: options.packagings,
-            statuses: options.statuses
-          }
+          data: this.getSettingsEntries(parsed)
         } as ResponseSettingsCollectionData
         break;
 
@@ -183,16 +274,15 @@ export class MockBackendService {
   }
   private getLoadEntryData(entry: DBLoadEntryData): ResponseLoadEntryData {
     if (!entry) return null
-    let settings: ResponseSettingsCollectionData = this.getSettings()
     return {
       id: entry.id,
       data: {
-        status: this.getCollectionEntryById(settings.data.statuses, entry.status),
+        status: this.getCollectionEntryById(this.unique(options).statuses, entry.status),
         formed: entry.formed,
-        fromDepartment: this.getCollectionEntryById(settings.data.departments, entry.fromDepartment),
-        toDepartment: this.getCollectionEntryById(settings.data.departments, entry.toDepartment),
-        service: this.getCollectionEntryById(settings.data.services, entry.service),
-        packaging: this.getCollectionEntryById(settings.data.packagings, entry.packaging),
+        fromDepartment: this.getCollectionEntryById(this.unique(options).departments, entry.fromDepartment),
+        toDepartment: this.getCollectionEntryById(this.unique(options).departments, entry.toDepartment),
+        service: this.getCollectionEntryById(this.unique(options).services, entry.service),
+        packaging: this.getCollectionEntryById(this.unique(options).packagings, entry.packaging),
         length: entry.length,
         width: entry.width,
         height: entry.height,
@@ -201,41 +291,32 @@ export class MockBackendService {
       }
     }
   }
-  private getSettingsEntriesWithTitles(parsed: Array<DBSettingsEntryData>): ResponseMainSettingsData {
-    let main: any = {}
-
+  private getSettingsEntries(parsed: Array<DBSettingsEntryData>): Array<DBSettingsEntryData> {
     if (!parsed || !parsed.length) {
-      main.firstRunOfApp = 'yes'
-      parsed = this.createRowsList(options.main) as Array<DBSettingsEntryData>
+      parsed = this.createRowsList('settings', initialSettings) as Array<DBSettingsEntryData>
+      parsed.push({
+        id: '',
+        property: 'firstRunOfApp',
+        value: 'yes'
+      })
     }
-    parsed.forEach(entry => {
-      let propertyData = this.getCollectionEntryById(options.departments, entry.value)
-      main[entry.property as string] = { ...propertyData, dbRecordId: entry.id }
-    })
-    return main
+    return parsed
   }
   private getLoadEntriesWithTitles(collection: Array<DBLoadEntryData>): Array<ResponseLoadCollectionEntry> {
-    let settings: ResponseSettingsCollectionData = this.getSettings()
-
     if (!collection) collection = []
     return collection.map(entry => ({
-      status: this.getCollectionEntryById(settings.data.statuses, entry.status),
+      status: this.getCollectionEntryById(this.unique(options).statuses, entry.status),
       formed: entry.formed,
       id: entry.id,
-      fromDepartment: this.getCollectionEntryById(settings.data.departments, entry.fromDepartment),
-      toDepartment: this.getCollectionEntryById(settings.data.departments, entry.toDepartment),
-      service: this.getCollectionEntryById(settings.data.services, entry.service),
-      packaging: this.getCollectionEntryById(settings.data.packagings, entry.packaging),
-      length: entry.length,
-      width: entry.width,
-      height: entry.height,
-      weight: entry.weight,
-      declaredCost: entry.declaredCost
+      fromDepartment: this.getCollectionEntryById(this.unique(options).departments, entry.fromDepartment),
+      toDepartment: this.getCollectionEntryById(this.unique(options).departments, entry.toDepartment),
+      service: this.getCollectionEntryById(this.unique(options).services, entry.service),
+      packaging: this.getCollectionEntryById(this.unique(options).packagings, entry.packaging)
     }))
   }
-  private getLoadsSummary(tableName: String): any {
-    let raw: String = this.readDBTable(tableName)
-    let parsed: Array<DBLoadEntryData> = JSON.parse(raw as string)
+  private getLoadsSummary(tableName: string): any {
+    let raw: string = this.readDBTable(tableName)
+    let parsed: Array<DBLoadEntryData> = JSON.parse(raw)
     let summary: any = {}
 
     summary.totalRecords = parsed && parsed.length || 0
@@ -250,108 +331,151 @@ export class MockBackendService {
         if (entry.status === '1') {
           summary.totalInStorage++
 
-          summary.totalWeight += parseFloat(entry.weight as string)
-          summary.totalVolume += parseFloat(entry.length as string) * parseFloat(entry.width as string) * parseFloat(entry.height as string)
+          summary.totalWeight += parseFloat(entry.weight)
+          summary.totalVolume += parseFloat(entry.length) * parseFloat(entry.width) * parseFloat(entry.height)
 
-          if (summary.totalByDepartment[entry.toDepartment as string]) {
-            summary.totalByDepartment[entry.toDepartment as string]++
+          if (summary.totalByDepartment[entry.toDepartment]) {
+            summary.totalByDepartment[entry.toDepartment]++
           } else {
-            summary.totalByDepartment[entry.toDepartment as string] = 1
+            summary.totalByDepartment[entry.toDepartment] = 1
           }
-          if (summary.totalByService[entry.service as string]) {
-            summary.totalByService[entry.service as string]++
+          if (summary.totalByService[entry.service]) {
+            summary.totalByService[entry.service]++
           } else {
-            summary.totalByService[entry.service as string] = 1
+            summary.totalByService[entry.service] = 1
           }
-          if (summary.totalByPackaging[entry.packaging as string]) {
-            summary.totalByPackaging[entry.packaging as string]++
+          if (summary.totalByPackaging[entry.packaging]) {
+            summary.totalByPackaging[entry.packaging]++
           } else {
-            summary.totalByPackaging[entry.packaging as string] = 1
+            summary.totalByPackaging[entry.packaging] = 1
           }
         }
       })
     }
     return summary
   }
-  private getSettings(): ResponseSettingsCollectionData {
-    return this.readAnyTypeAnyEntity({
-      type: 'settings',
-      action: 'read',
-      entity: 'collection',
-      data: {}
-    }) as ResponseSettingsCollectionData
+  private updateAnyTypeAnyEntity(requestData: RequestData): Array<string> {
+    switch (requestData.entity) {
+      case 'collection':
+        return (requestData as RequestCollectionData).data.map(entry =>
+          this.updateRow({
+            action: requestData.action,
+            entity: requestData.entity,
+            type: requestData.type,
+            data: entry
+          })
+        )
+        break;
+
+      case 'entry':
+        return [this.updateRow(requestData)]
+        break;
+
+      default:
+        break;
+    }
   }
-  private getCollectionEntryById(collection: Array<any>, id: String): any {
+  private getCollectionEntryById(collection: Array<any>, id: string): any {
     return collection.find(item => item.id === id)
   }
 
   constructor() { }
 
-  mockRequest(requestData: RequestData): Observable<any> {
-    let scope: MockBackendService = this
+  mockRequest(subscriber: Subscriber<any>, requestData: RequestData): void {
     let action: Function
-    return new Observable(subscriber => {
-      switch (requestData.action) {
-        case 'create':
-          action = () => scope.createAnyTypeRow(requestData)
-          break;
 
-        case 'read':
-          action = () => scope.readAnyTypeAnyEntity(requestData)
-          break;
+    this.checkDbRev()
 
-        case 'update':
-          action = () => scope.updateRow(requestData)
-          break;
+    switch (requestData.action) {
+      case 'execcomm':
+        action = () => this.execCommand(requestData)
+        break;
 
-        case 'delete':
-          action = () => scope.deleteRow(requestData)
-          break;
+      case 'create':
+        action = () => this.createAnyTypeRow(requestData)
+        break;
 
-        default:
-          break;
-      }
-      scope.mockResponseDelay(() => {
-        subscriber.next(action())
-        subscriber.complete()
-      })
+      case 'read':
+        action = () => this.readAnyTypeAnyEntity(requestData)
+        break;
+
+      case 'update':
+        action = () => this.updateAnyTypeAnyEntity(requestData)
+        break;
+
+      case 'delete':
+        action = () => this.deleteRow(requestData)
+        break;
+
+      default:
+        action = () => null
+        break;
+    }
+    this.mockResponseDelay(() => {
+      subscriber.next(JSON.stringify(action()))
+      subscriber.complete()
     })
   }
 }
+/* SORT HANDLERS */
+interface SortHandlers {
+  formed: Function
+}
 /* DB DATA */
 interface DBEntryData {
-  id: String
+  id: string
 }
 interface DBLoadEntryData extends DBEntryData {
-  status: String
-  formed: String
-  declaredCost: String
-  fromDepartment: String
-  height: String
-  length: String
-  packaging: String
-  service: String
-  toDepartment: String
-  weight: String
-  width: String
+  status: string
+  formed: string
+  declaredCost: string
+  fromDepartment: string
+  height: string
+  length: string
+  packaging: string
+  service: string
+  toDepartment: string
+  weight: string
+  width: string
 }
 interface DBSettingsEntryData extends DBEntryData {
-  property: String
-  value: String
+  property: string
+  value: string
 }
 /* REQUEST */
 interface RequestData {
-  action: String
-  type: String
-  entity: String
+  action: string
+  type: string
+  entity: string
   data: any
+}
+interface RequestCommandData extends RequestData {
+  data: Command
+}
+interface Command {
+  command: string
+  options: CommandOptions
+}
+interface CommandOptions {
+  formedSpanStart: Date
+  formedSpanEnd: Date
+  quantity: number
+  dbIdPrefix: string
 }
 interface RequestEntryData extends RequestData {
   data: {
-    id: String
-    formed: String
-    status: String
+    id: string
   }
+}
+interface RequestLoadEntryData extends RequestEntryData {
+  data: {
+    id: string
+    formed: string
+    status: string
+  }
+}
+interface RequestCollectionData extends RequestData {
+  data: Array<DBEntryData>
 }
 /* RESPONSE */
 interface ResponseData {
@@ -359,65 +483,43 @@ interface ResponseData {
 }
 /* entry */
 interface ResponseEntryData extends ResponseData {
-  id: String
+  id: string
 }
 interface ResponseLoadEntryData extends ResponseEntryData {
   data: {
-    status: String
-    formed: String
-    declaredCost: String
+    status: string
+    formed: string
+    declaredCost: string
     fromDepartment: ResponseLoadSelectedData
-    height: String
-    length: String
+    height: string
+    length: string
     packaging: ResponseLoadSelectedData
     service: ResponseLoadSelectedData
     toDepartment: ResponseLoadSelectedData
-    weight: String
-    width: String
+    weight: string
+    width: string
   }
 }
 interface ResponseLoadSelectedData {
-  id: String
-  title: String
+  id: string
+  title: string
 }
 /* collection */
 interface ResponseCollectionData extends ResponseData {
-  type: String
+  type: string
 }
 interface ResponseLoadCollectionData extends ResponseCollectionData {
   data: Array<ResponseLoadCollectionEntry>
 }
 interface ResponseLoadCollectionEntry {
-  id: String
-  declaredCost: String
+  id: string
   fromDepartment: ResponseLoadSelectedData
-  height: String
-  length: String
   packaging: ResponseLoadSelectedData
   service: ResponseLoadSelectedData
   toDepartment: ResponseLoadSelectedData
-  weight: String
-  width: String
   status: ResponseLoadSelectedData
-  formed: String
+  formed: string
 }
 interface ResponseSettingsCollectionData extends ResponseCollectionData {
-  data: {
-    main: ResponseMainSettingsData
-    departments: Array<ResponseSettingsEntryData>
-    services: Array<ResponseSettingsEntryData>
-    packagings: Array<ResponseSettingsEntryData>
-    statuses: Array<ResponseSettingsEntryData>
-  }
-}
-interface ResponseSettingsEntryData {
-  id: String
-  title: String
-}
-interface ResponseMainSettingsData {
-  currentDepartment: {
-    id: String
-    title: String
-    dbRecordId: String
-  }
+  data: Array<DBSettingsEntryData>
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { DataService } from './data.service';
+
+import { UtilityService } from './utility.service';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,6 @@ export class AppComponent implements OnInit {
   constructor(private titleService: Title) {}
 
   ngOnInit() {
-    this.titleService.setTitle(DataService.APP_NAME.concat(' ').concat(DataService.APP_VERSION as string))
+    this.titleService.setTitle(UtilityService.APP_NAME.concat(' ').concat(UtilityService.APP_VERSION))
   }
 }

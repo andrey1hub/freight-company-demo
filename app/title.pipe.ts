@@ -5,8 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class TitlePipe implements PipeTransform {
 
-  transform(value: any): String {
-    return value['title'];
+  transform(value: any): string {
+    return value && value.title || ''
   }
 
 }

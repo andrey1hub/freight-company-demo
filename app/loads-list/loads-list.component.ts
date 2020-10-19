@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadService, LoadResponseEntryData } from '../load.service';
-import { Subscription } from 'rxjs';
+
+import { LoadService } from '../load.service';
+import { LoadEntryFullData } from '../models/load-entry-full-data.public';
+import { FilterLoadsData } from 'src/app/models/filter-loads-data.system';
 
 @Component({
   selector: 'app-loads-list',
@@ -8,21 +10,17 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./loads-list.component.scss']
 })
 export class LoadsListComponent implements OnInit {
-  loads: Array<LoadResponseEntryData>
-  loadInStorageStatusId: String = '1'
+  loads: Array<LoadEntryFullData>
+  loadInStorageStatusId: string = '1'
+  loadsHandler: Function = (loadsData: Array<LoadEntryFullData>) => { this.loads = loadsData }
 
   constructor(private loadService: LoadService) { }
 
   ngOnInit(): void {
-    let scope: LoadsListComponent = this
-    let subscription: Subscription = this.loadService.readLoadsList().subscribe({
-      next(loadsData) {
-        scope.loads = loadsData.data
-      },
-      complete() {
-        subscription.unsubscribe()
-      }
-    })
+    this.loadService.readLoadsList(this.loadsHandler)
+  }
+  filterLoadsList(filterData: FilterLoadsData): void {
+    if (this.loads) this.loadService.getFilteredLoadsList(this.loadsHandler, filterData)
   }
 
 }

@@ -1,0 +1,13 @@
+<div class="row">
+  <div class="{{ data.labelClasses }}"><label for="input{{ data.label.split(' ').join('') }}">{{ data.label }}:</label></div>
+  <div class="{{ data.inputClasses }}">
+    <div class="{{ data.inputStartClasses }}">
+      <input type="text" class="form-control" [class.is-invalid]="controlStart.invalid" [formControl]="controlStart" [matDatepicker]="pickerStart" [max]="dateEnd" id="input{{ data.label.split(' ').join('') }}" placeholder="{{ data.placeHolderStart }}" (click)="pickerStart.open()" (dateChange)="dateStartChange($event)">
+      <mat-datepicker #pickerStart></mat-datepicker>
+    </div>
+    <div class="{{ data.inputEndClasses }}">
+      <input type="text" class="form-control" [class.is-invalid]="controlEnd.invalid" [formControl]="controlEnd" [matDatepicker]="pickerEnd" [min]="dateStart" placeholder="{{ data.placeHolderEnd }}" (click)="pickerEnd.open()" (dateChange)="dateEndChange($event)">
+      <mat-datepicker #pickerEnd></mat-datepicker>
+    </div>
+  </div>
+</div>

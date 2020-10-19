@@ -2,57 +2,84 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { MockBackendService } from './mock-backend.service';
+import { EntryData } from './models/entry-data.public';
+import { LoadEntryData } from './models/load-entry-data.public';
+import { SettingEntryData } from './models/setting-entry-data.public';
+import { Command } from 'src/app/models/command.public';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-  private static DATA_ACTION_READ: String = 'read'
-  private static DATA_ACTION_CREATE: String = 'create'
-  private static DATA_ACTION_UPDATE: String = 'update'
-  private static DATA_ACTION_DELETE: String = 'delete'
+  private static DATA_ACTION_EXECCOMM: string = 'execcomm'
 
-  static ENTITY_SUMMARY: String = 'summary'
-  static ENTITY_COLLECTION: String = 'collection'
-  static ENTITY_ENTRY: String = 'entry'
+  private static DATA_ACTION_READ: string = 'read'
+  private static DATA_ACTION_CREATE: string = 'create'
+  private static DATA_ACTION_UPDATE: string = 'update'
+  private static DATA_ACTION_DELETE: string = 'delete'
 
-  static APP_NAME: String = 'Freight Company Demo'
-  static APP_VERSION: String = 'v.1.0.0'
+  static ENTITY_SUMMARY: string = 'summary'
+  static ENTITY_COLLECTION: string = 'collection'
+  static ENTITY_ENTRY: string = 'entry'
+
+  static COMMAND_GENERATE: string = 'generate'
 
   constructor(private mockBackendService: MockBackendService) { }
 
-  createRequest(data: Data<Object>): Observable<any> {
-    return this.mockBackendService.mockRequest({
-      action: DataService.DATA_ACTION_CREATE,
-      entity: DataService.ENTITY_ENTRY,
-      ...data
-    })
+  execCommand(type: string, data: Command): Observable<any> {
+    return new Observable(subscriber => this.mockBackendService.mockRequest(
+      subscriber,
+      {
+        action: DataService.DATA_ACTION_EXECCOMM,
+        entity: null,
+        type,
+        data
+      }
+    ))
   }
-  readRequest(type: String, entity: String, id?: String): Observable<any> {
-    return this.mockBackendService.mockRequest({
-      action: DataService.DATA_ACTION_READ,
-      type,
-      entity,
-      data: { id }
-    })
+
+  createRequest(type: string, data: EntryData): Observable<any> {
+    return new Observable(subscriber => this.mockBackendService.mockRequest(
+      subscriber,
+      {
+        action: DataService.DATA_ACTION_CREATE,
+        entity: DataService.ENTITY_ENTRY,
+        type,
+        data
+      }
+    ))
   }
-  updateRequest(data: Data<Object>): Observable<any> {
-    return this.mockBackendService.mockRequest({
-      action: DataService.DATA_ACTION_UPDATE,
-      entity: DataService.ENTITY_ENTRY,
-      ...data
-    })
+  readRequest(type: string, entity: string, data: { id?: string }): Observable<any> {
+    return new Observable(subscriber => this.mockBackendService.mockRequest(
+      subscriber,
+      {
+        action: DataService.DATA_ACTION_READ,
+        type,
+        entity,
+        data
+      }
+    ))
   }
-  deleteRequest(type: String, id: String): Observable<any> {
-    return this.mockBackendService.mockRequest({
-      action: DataService.DATA_ACTION_DELETE,
-      type,
-      entity: DataService.ENTITY_ENTRY,
-      data: { id }
-    })
+  updateRequest(type: string, entity: string, data: LoadEntryData | Array<SettingEntryData>): Observable<any> {
+    return new Observable(subscriber => this.mockBackendService.mockRequest(
+      subscriber,
+      {
+        action: DataService.DATA_ACTION_UPDATE,
+        type,
+        entity,
+        data
+      }
+    ))
   }
-}
-export interface Data<T> {
-  type: String
-  data: T
+  deleteRequest(type: string, data: { id: string }): Observable<any> {
+    return new Observable(subscriber => this.mockBackendService.mockRequest(
+      subscriber,
+      {
+        action: DataService.DATA_ACTION_DELETE,
+        type,
+        entity: DataService.ENTITY_ENTRY,
+        data
+      }
+    ))
+  }
 }
