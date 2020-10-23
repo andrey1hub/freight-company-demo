@@ -12,6 +12,7 @@ import { OptionsData } from 'src/app/models/options-data.system';
 import { OptionItemData } from 'src/app/models/option-item-data.system';
 import { ItemFormControl } from 'src/app/models/item-form-control.system';
 import { FilterLoadsData } from 'src/app/models/filter-loads-data.system';
+import { FilterControls } from 'src/app/models/filter-controls.system';
 
 @Component({
   selector: 'app-loads-filter',
@@ -21,6 +22,8 @@ import { FilterLoadsData } from 'src/app/models/filter-loads-data.system';
 export class LoadsFilterComponent implements OnInit {
   @Output() filterEvent = new EventEmitter<FilterLoadsData>()
 
+  filterControls: FilterControls = loadsFilterData.filterControls
+
   idFieldData: FormItemInputTextData = loadsFilterData.id
   formedFieldData: FormItemDatepicker = loadsFilterData.formed
   selectFieldsData: Array<FormItemSelectData> = UtilityService.uniqueCopy(loadsFilterData.selects)
@@ -28,6 +31,7 @@ export class LoadsFilterComponent implements OnInit {
 
   form: FormGroup
   filterData: FilterLoadsData
+  showFilter: boolean = true
 
   private getOptionsWithOptionAny(options: OptionsData): OptionsData {
     let optionsData: any = {}
@@ -50,15 +54,7 @@ export class LoadsFilterComponent implements OnInit {
     this.form = new FormGroup({})
 
     setTimeout(() => {
-      this.form.setValue({
-        id: '',
-        formedAfter: '',
-        formedBefore: '',
-        fromDepartment: UtilityService.FILTER_ANY_OPTION_ID,
-        toDepartment: UtilityService.FILTER_ANY_OPTION_ID,
-        service: UtilityService.FILTER_ANY_OPTION_ID,
-        packaging: UtilityService.FILTER_ANY_OPTION_ID
-      })
+      this.setDefaultValue()
     }, 0)
 
     this.form.valueChanges.pipe(auditTime(UtilityService.FILTER_AUDIT_TIME)).subscribe({
@@ -74,8 +70,25 @@ export class LoadsFilterComponent implements OnInit {
       }
     })
   }
+  setDefaultValue(): void {
+    this.form.setValue({
+      id: '',
+      formedAfter: '',
+      formedBefore: '',
+      fromDepartment: UtilityService.FILTER_ANY_OPTION_ID,
+      toDepartment: UtilityService.FILTER_ANY_OPTION_ID,
+      service: UtilityService.FILTER_ANY_OPTION_ID,
+      packaging: UtilityService.FILTER_ANY_OPTION_ID
+    })
+  }
   addFormControl(control: ItemFormControl) {
     this.form.addControl(control.name, control.instance)
+  }
+  onShowToggle(): void {
+    this.showFilter = !this.showFilter
+  }
+  onClearFilter(): void {
+    this.setDefaultValue()
   }
 
 }

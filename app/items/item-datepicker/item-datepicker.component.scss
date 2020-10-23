@@ -1,0 +1,15 @@
+.folded {
+  cursor: pointer;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  padding: 4px 0;
+  font-size: 0.875rem;
+  line-height: 1;
+  text-align: center;
+  span {
+    display: block;
+    &:hover {
+      background-color: #ced4da;
+    }
+  }
+}

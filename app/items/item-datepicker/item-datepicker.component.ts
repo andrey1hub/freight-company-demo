@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 import { FormItemDatepicker } from 'src/app/models/form-item-datepicker-data.system';
 import { ItemFormControl } from 'src/app/models/item-form-control.system';
@@ -18,9 +17,6 @@ export class ItemDatepickerComponent implements OnInit {
   controlStart: FormControl
   controlEnd: FormControl
 
-  dateStart: Date
-  dateEnd: Date
-
   constructor() { }
 
   ngOnInit(): void {
@@ -35,12 +31,6 @@ export class ItemDatepickerComponent implements OnInit {
       instance: this.controlEnd,
       name: this.data.label.split(' ').map((word, index) => index === 0 ? word.toLowerCase() : word).join('').concat(this.data.labelEndSuffix)
     })
-  }
-  dateStartChange(matDatepickerEvent: MatDatepickerInputEvent<Date, any>) {
-    this.dateStart = matDatepickerEvent.value
-  }
-  dateEndChange(matDatepickerEvent: MatDatepickerInputEvent<Date, any>) {
-    this.dateEnd = matDatepickerEvent.value
   }
 
 }

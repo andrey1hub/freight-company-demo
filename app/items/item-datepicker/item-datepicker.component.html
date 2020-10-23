@@ -1,13 +1,19 @@
 <div class="row">
   <div class="{{ data.labelClasses }}"><label for="input{{ data.label.split(' ').join('') }}">{{ data.label }}:</label></div>
-  <div class="{{ data.inputClasses }}">
+  <div class="{{ data.inputClasses }} d-none" [class.d-md-block]="data.foldable">
+    <div class="folded">
+      <span (click)="pickerStart.open()">{{ controlStart.value?.toLocaleDateString && controlStart.value.toLocaleDateString() || data.placeHolderStart }}</span>
+      <span (click)="pickerEnd.open()">{{ controlEnd.value?.toLocaleDateString && controlEnd.value.toLocaleDateString() || data.placeHolderEnd }}</span>
+    </div>
+  </div>
+  <div class="{{ data.inputClasses }}" [class.d-md-none]="data.foldable">
     <div class="{{ data.inputStartClasses }}">
-      <input type="text" class="form-control" [class.is-invalid]="controlStart.invalid" [formControl]="controlStart" [matDatepicker]="pickerStart" [max]="dateEnd" id="input{{ data.label.split(' ').join('') }}" placeholder="{{ data.placeHolderStart }}" (click)="pickerStart.open()" (dateChange)="dateStartChange($event)">
-      <mat-datepicker #pickerStart></mat-datepicker>
+      <input type="text" class="form-control" [class.is-invalid]="controlStart.invalid" [formControl]="controlStart" [matDatepicker]="pickerStart" [max]="controlEnd.value?.getDate && controlEnd.value" id="input{{ data.label.split(' ').join('') }}" placeholder="{{ data.placeHolderStart }}" (click)="pickerStart.open()">
+      <mat-datepicker touchUi #pickerStart></mat-datepicker>
     </div>
     <div class="{{ data.inputEndClasses }}">
-      <input type="text" class="form-control" [class.is-invalid]="controlEnd.invalid" [formControl]="controlEnd" [matDatepicker]="pickerEnd" [min]="dateStart" placeholder="{{ data.placeHolderEnd }}" (click)="pickerEnd.open()" (dateChange)="dateEndChange($event)">
-      <mat-datepicker #pickerEnd></mat-datepicker>
+      <input type="text" class="form-control" [class.is-invalid]="controlEnd.invalid" [formControl]="controlEnd" [matDatepicker]="pickerEnd" [min]="controlStart.value?.getDate && controlStart.value" placeholder="{{ data.placeHolderEnd }}" (click)="pickerEnd.open()">
+      <mat-datepicker touchUi #pickerEnd></mat-datepicker>
     </div>
   </div>
 </div>

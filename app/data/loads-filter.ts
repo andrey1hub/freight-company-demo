@@ -1,4 +1,9 @@
 export const loadsFilterData = {
+  filterControls: {
+    showFilter: 'Show Loads Filter',
+    hideFilter: 'Hide Loads Filter',
+    clearFilter: 'Clear Loads Filter'
+  },
   id: {
     min: null,
     disabled: false,
@@ -13,6 +18,7 @@ export const loadsFilterData = {
     placeHolder: 'Filter by ID, case insensitive'
   },
   formed: {
+    foldable: true,
     classes: 'col-md-6',
     label: 'Formed',
     labelStartSuffix: 'After',

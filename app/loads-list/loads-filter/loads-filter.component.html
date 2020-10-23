@@ -1,4 +1,13 @@
-<div class="container-xl pt-2">
+<div class="container-xl loads-filter-controls">
+  <i class="icon-container clear material-icons-round border border-secondary rounded" [ngStyle]="{'display': showFilter ? 'block' : 'none'}" (click)="onClearFilter()">
+    <i title="{{ filterControls.clearFilter }}">&#xe5cd;</i>
+  </i>
+  <i class="icon-container material-icons-round border border-secondary rounded" (click)="onShowToggle()">
+    <i title="{{ filterControls.hideFilter }}" [ngStyle]="{'display': showFilter ? 'block' : 'none'}">&#xe5ce;</i>
+    <i title="{{ filterControls.showFilter }}" [ngStyle]="{'display': showFilter ? 'none' : 'block'}">&#xe5cf;</i>
+  </i>
+</div>
+<div [ngStyle]="{'display': showFilter ? 'block' : 'none'}" class="container-xl pt-2">
   <div class="row">
     <div class="col-sm-6 col-md-4">
       <div class="row">
