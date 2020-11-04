@@ -1,9 +1,14 @@
 <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
   <div class="container-xl">
-    <div *ngIf="showSuccessMessage" class="alert alert-success app-row text-center" role="alert">
-      Saved
+    <div *ngIf="showSuccessMessage" class="alert alert-success border border-success text-success app-row text-center" role="alert">
+      Settings are saved
     </div>
-    <app-item-select *ngFor="let item of selectsData" [data]="item" [stack]="options[item.stackId]" (controlOutputEvent)="addFormControl($event)"></app-item-select>
+    <div class="row">
+      <app-item-select *ngFor="let item of selectsData" class="{{ item.classes }}" [data]="item" [stack]="options[item.stackId]" (controlOutputEvent)="addFormControl($event)"></app-item-select>
+    </div>
+    <div class="row">
+      <app-item-checkbox *ngFor="let item of checkboxesData" class="{{ item.classes }}" [data]="item" (controlOutputEvent)="addFormControl($event)"></app-item-checkbox>
+    </div>
     <div class="w-50 pt-3 mx-auto">
       <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">Save</button>
     </div>

@@ -34,7 +34,7 @@ export class ItemSelectComponent implements OnInit {
     }
     this.controlOutputEvent.emit({
       instance: this.control,
-      name: this.data.label.split(' ').map((word, index) => index === 0 ? word.toLowerCase() : word).join('').concat(this.data.labelSuffix || '')
+      name: this.data.property
     })
   }
 

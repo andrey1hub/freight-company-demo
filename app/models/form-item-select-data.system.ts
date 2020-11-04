@@ -2,9 +2,9 @@ export interface FormItemSelectData {
   disabled: boolean
   required: boolean
   classes: string
-  marginReset: string
+  rowClasses: string
   label: string
-  labelSuffix: string
+  property: string
   labelClasses: string
   inputClasses: string
   stackId: string

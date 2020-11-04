@@ -1,6 +1,6 @@
-<div class="{{ data.isRow ? 'row' : 'app-row' }}" [class.mr-sm-0]="data.marginReset">
-  <div class="{{ data.labelClasses || 'pt-2 pt-sm-0' }}"><label for="input{{ data.label.split(' ').join('') }}">{{ data.label }}:</label></div>
+<div class="{{ (data.isRow ? 'row' : 'app-row').concat(' ').concat(data.rowClasses) }}">
+  <div class="{{ data.labelClasses || 'pt-2 pt-sm-0' }}"><label for="input-{{ data.property }}">{{ data.label }}:</label></div>
   <div class="{{ data.inputClasses || '' }}">
-    <input type="text" class="form-control" [class.is-invalid]="(data.required ? control.touched : true) && control.invalid" [formControl]="control" id="input{{ data.label.split(' ').join('') }}" placeholder="{{ data.placeHolder }}">
+    <input type="text" class="form-control" [class.is-invalid]="(data.required ? control.touched : true) && control.invalid" [formControl]="control" id="input-{{ data.property }}" placeholder="{{ data.placeHolder }}">
   </div>
 </div>

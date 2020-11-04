@@ -1,4 +1,14 @@
 export const options = {
+  unitsSystems: [
+    {
+      id: 'mkg',
+      title: 'Meter, Kilogram'
+    },
+    {
+      id: 'inlb',
+      title: 'Inch, Pound'
+    }
+  ],
   statuses: [
     {
       id: '0',
@@ -177,51 +187,51 @@ export const options = {
     },
     {
       id: '5112414437',
-      title: 'PET, size 21,0 x 29,7 cm'
+      title: 'PET Small'
     },
     {
       id: '6924893245',
-      title: 'PET, size 29,7 × 42,0 cm'
+      title: 'PET Medium'
     },
     {
       id: '7112325374',
-      title: 'PET, size 42,0 × 59,4 cm'
+      title: 'PET Large'
     },
     {
       id: '8967735355',
-      title: 'Carton, size 40 x 30 x 15 cm'
+      title: 'Carton Small'
     },
     {
       id: '9123412342',
-      title: 'Carton, size 40 x 45 x 30 cm'
+      title: 'Carton Medium'
     },
     {
       id: '1012325374',
-      title: 'Carton, size 50 x 45 x 50 cm'
+      title: 'Carton Large'
     },
     {
       id: '1167735355',
-      title: 'Carton with filler, size 40 x 30 x 15 cm'
+      title: 'Carton With Filler Small'
     },
     {
       id: '1253412342',
-      title: 'Carton with filler, size 40 x 45 x 30 cm'
+      title: 'Carton With Filler Medium'
     },
     {
       id: '1376586586',
-      title: 'Carton with filler, size 50 x 45 x 50 cm'
+      title: 'Carton With Filler Large'
     },
     {
       id: '1456755745',
-      title: 'Stretch PET, up to 100 x 50 x 50 cm'
+      title: 'Stretch PET Small'
     },
     {
       id: '1554843453',
-      title: 'Stretch PET, up to 100 x 100 x 50 cm'
+      title: 'Stretch PET Medium'
     },
     {
       id: '1625234255',
-      title: 'Stretch PET, up to 100 x 100 x 100 cm'
+      title: 'Stretch PET Large'
     }
   ]
 }

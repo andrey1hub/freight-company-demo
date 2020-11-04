@@ -25,11 +25,11 @@ export class ItemDatepickerComponent implements OnInit {
 
     this.controlOutputEvent.emit({
       instance: this.controlStart,
-      name: this.data.label.split(' ').map((word, index) => index === 0 ? word.toLowerCase() : word).join('').concat(this.data.labelStartSuffix)
+      name: this.data.propertyStart
     })
     this.controlOutputEvent.emit({
       instance: this.controlEnd,
-      name: this.data.label.split(' ').map((word, index) => index === 0 ? word.toLowerCase() : word).join('').concat(this.data.labelEndSuffix)
+      name: this.data.propertyEnd
     })
   }
 

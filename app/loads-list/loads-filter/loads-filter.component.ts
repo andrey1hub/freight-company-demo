@@ -13,6 +13,8 @@ import { OptionItemData } from 'src/app/models/option-item-data.system';
 import { ItemFormControl } from 'src/app/models/item-form-control.system';
 import { FilterLoadsData } from 'src/app/models/filter-loads-data.system';
 import { FilterControls } from 'src/app/models/filter-controls.system';
+import { SettingsListData } from 'src/app/models/settings-list-data.system';
+import { SettingsService } from 'src/app/settings.service';
 
 @Component({
   selector: 'app-loads-filter',
@@ -31,7 +33,8 @@ export class LoadsFilterComponent implements OnInit {
 
   form: FormGroup
   filterData: FilterLoadsData
-  showFilter: boolean = true
+  settings: SettingsListData
+  showFilter: boolean
 
   private getOptionsWithOptionAny(options: OptionsData): OptionsData {
     let optionsData: any = {}
@@ -46,11 +49,15 @@ export class LoadsFilterComponent implements OnInit {
     return optionsData
   }
 
-  constructor() { }
+  constructor(private settingsService: SettingsService) { }
 
   ngOnInit(): void {
     let scope: LoadsFilterComponent = this
 
+    this.settingsService.readSettings((settingsData: SettingsListData) => {
+      this.settings = settingsData
+      this.showFilter = this.settings.showLoadsFilter
+    })
     this.form = new FormGroup({})
 
     setTimeout(() => {

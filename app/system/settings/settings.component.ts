@@ -10,6 +10,7 @@ import { SettingsListData } from 'src/app/models/settings-list-data.system';
 import { SettingsListIds } from 'src/app/models/settings-list-ids.system';
 import { settingsForm } from 'src/app/data/settings-form';
 import { FormItemSelectData } from 'src/app/models/form-item-select-data.system';
+import { FormItemCheckboxData } from 'src/app/models/form-item-checkbox-data.system';
 
 @Component({
   selector: 'app-settings',
@@ -18,6 +19,7 @@ import { FormItemSelectData } from 'src/app/models/form-item-select-data.system'
 })
 export class SettingsComponent implements OnInit {
   selectsData: Array<FormItemSelectData> = settingsForm.selects
+  checkboxesData: Array<FormItemCheckboxData> = settingsForm.checkboxes
   settings: SettingsListData
   options: OptionsData = UtilityService.uniqueCopy(options)
   form: FormGroup
@@ -32,7 +34,12 @@ export class SettingsComponent implements OnInit {
 
         this.form.setValue({
           validityControl: 'done',
-          currentDepartment: this.settings.currentDepartment.id
+          currentDepartment: this.settings.currentDepartment.id,
+          unitsSystem: this.settings.unitsSystem.id,
+          showLoadsFilter: this.settings.showLoadsFilter,
+          keepFilterQuery: this.settings.keepFilterQuery,
+          loadsNavButtons: this.settings.loadsNavButtons,
+          buttonsHotkeys: this.settings.buttonsHotkeys
         })
         this.form.removeControl('validityControl')
       }
@@ -50,9 +57,7 @@ export class SettingsComponent implements OnInit {
 
     this.showSuccessMessage = false
     this.settingsService.updateSettings(
-      (response: Array<string>) => {
-        if (response && response.length) this.showSuccessMessage = true
-      },
+      (response: Array<string>) => { if (response && response.length) this.showSuccessMessage = true },
       raw
     )
   }

@@ -1,5 +1,5 @@
 <h3>System</h3>
-<ul class="nav nav-tabs mb-4">
+<ul class="nav nav-tabs mb-4 pt-2">
   <li *ngFor="let item of menu?.stack" class="nav-item">
     <a class="nav-link" routerLink="{{ item.link }}" [class.active]="menu.linksStatus[item.id]" (click)="menu.setLinkActive(item.id)">{{ item.label }}</a>
   </li>

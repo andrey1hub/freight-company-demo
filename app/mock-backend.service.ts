@@ -7,16 +7,53 @@ const initialSettings: Array<DBSettingsEntryData> = [
   {
     id: '',
     property: 'currentDepartment',
+    modifier: 'select',
+    stackId: 'departments',
     value: '1982543442'
+  },
+  {
+    id: '',
+    property: 'unitsSystem',
+    modifier: 'select',
+    stackId: 'unitsSystems',
+    value: 'mkg'
+  },
+  {
+    id: '',
+    property: 'showLoadsFilter',
+    modifier: 'checkbox',
+    stackId: '',
+    value: '1'
+  },
+  {
+    id: '',
+    property: 'keepFilterQuery',
+    modifier: 'checkbox',
+    stackId: '',
+    value: '1'
+  },
+  {
+    id: '',
+    property: 'loadsNavButtons',
+    modifier: 'checkbox',
+    stackId: '',
+    value: '1'
+  },
+  {
+    id: '',
+    property: 'buttonsHotkeys',
+    modifier: 'checkbox',
+    stackId: '',
+    value: '1'
   }
 ]
-const DB_REVISION: number = 1
+const DB_REVISION: number = 2
 
 @Injectable({
   providedIn: 'root'
 })
 export class MockBackendService {
-  private validDbRevisions: Array<number> = [1]
+  private validDbRevisions: Array<number> = [1, 2]
   private db: Storage = window.localStorage
   private checkDbRev(): boolean {
     let dbRev: number = parseInt(this.readDBTable('DB_REVISION') || '0')
@@ -297,10 +334,19 @@ export class MockBackendService {
       parsed.push({
         id: '',
         property: 'firstRunOfApp',
+        modifier: 'text',
+        stackId: '',
         value: 'yes'
       })
     }
-    return parsed
+    return parsed.map(item => {
+      if (!item.modifier) {
+        // Have be moved to separate patch function
+        item.modifier = initialSettings[0].modifier
+        item.stackId = initialSettings[0].stackId
+      }
+      return item
+    })
   }
   private getLoadEntriesWithTitles(collection: Array<DBLoadEntryData>): Array<ResponseLoadCollectionEntry> {
     if (!collection) collection = []
@@ -440,6 +486,8 @@ interface DBLoadEntryData extends DBEntryData {
 }
 interface DBSettingsEntryData extends DBEntryData {
   property: string
+  modifier: string
+  stackId: string
   value: string
 }
 /* REQUEST */

@@ -22,6 +22,7 @@ import { LoadsFilterComponent } from './loads-list/loads-filter/loads-filter.com
 import { ItemDatepickerComponent } from './items/item-datepicker/item-datepicker.component';
 import { SettingsComponent } from './system/settings/settings.component';
 import { LoadsGeneratorComponent } from './system/loads-generator/loads-generator.component';
+import { ItemCheckboxComponent } from './items/item-checkbox/item-checkbox.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { LoadsGeneratorComponent } from './system/loads-generator/loads-generato
     LoadsFilterComponent,
     ItemDatepickerComponent,
     SettingsComponent,
-    LoadsGeneratorComponent
+    LoadsGeneratorComponent,
+    ItemCheckboxComponent
   ],
   imports: [
     BrowserModule,

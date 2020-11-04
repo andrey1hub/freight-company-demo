@@ -6,7 +6,7 @@ import { UtilityService } from 'src/app/utility.service';
 import { SettingsListIds } from './models/settings-list-ids.system';
 import { SettingEntryData } from './models/setting-entry-data.public';
 import { options } from './data/options';
-import { OptionsData } from 'src/app/models/options-data.system';
+import { OptionItemData } from './models/option-item-data.system';
 import { SettingsListData } from './models/settings-list-data.system';
 
 @Injectable({
@@ -19,18 +19,26 @@ export class SettingsService extends AbstractStorageService {
     let settingsListData: any = {}
 
     data.forEach(setting => {
-      let settingData: any
+      let settingData: OptionItemData | boolean | string
 
-      if (setting.property === 'firstRunOfApp') {
-        settingData = setting.value
-      } else {
-        settingData = {
-          id: setting.value,
-          dbRecordId: setting.id
-        }
-        if (setting.property === 'currentDepartment') {
-          settingData.title = (UtilityService.uniqueCopy(options) as OptionsData).departments.find(item => item.id === setting.value).title
-        }
+      switch (setting.modifier) {
+        case 'select':
+          settingData = {
+            id: setting.value,
+            title: UtilityService.uniqueCopy(options)[setting.stackId].find((item: OptionItemData) => item.id === setting.value).title
+          }
+          break;
+
+        case 'checkbox':
+          settingData = !!parseInt(setting.value)
+          break;
+
+        case 'text':
+          settingData = setting.value
+          break;
+
+        default:
+          break;
       }
       settingsListData[setting.property] = settingData
     })
@@ -62,7 +70,11 @@ export class SettingsService extends AbstractStorageService {
     Object.keys(data).forEach(key => {
       storage.find(entry => {
         if (entry.property === key) {
-          entry.value = data[key]
+          if (entry.modifier === 'checkbox') {
+            entry.value = data[key] ? '1' : '0'
+          } else {
+            entry.value = data[key]
+          }
           return true
         }
       })

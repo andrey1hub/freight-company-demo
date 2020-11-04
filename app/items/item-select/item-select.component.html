@@ -1,7 +1,7 @@
-<div class="row {{ data.marginReset }}">
-  <div class="{{ data.labelClasses || 'col-sm-4 p-0 pr-sm-3 pt-2' }}"><label for="select{{ data.label.split(' ').join('').concat(data.labelSuffix || '') }}">{{ data.label }}:</label></div>
-  <div class="{{ data.inputClasses || 'col-sm-8 p-0' }}">
-    <select class="form-control" [formControl]="control" id="select{{ data.label.split(' ').join('').concat(data.labelSuffix || '') }}">
+<div class="row {{ data.rowClasses }}">
+  <div class="{{ data.labelClasses || 'col-sm-4 px-0 pr-sm-3 pt-2' }}"><label for="select-{{ data.property }}">{{ data.label }}:</label></div>
+  <div class="{{ data.inputClasses || 'col-sm-8 px-0' }}">
+    <select class="form-control" [formControl]="control" id="select-{{ data.property }}">
       <option *ngFor="let item of stack" [ngValue]="item.id" value="{{ item.id }}">{{ item | title }}</option>
     </select>
   </div>
