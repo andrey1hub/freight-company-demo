@@ -7,6 +7,8 @@ import { LoadEntryData } from './models/load-entry-data.public';
 import { FilterLoadsData } from './models/filter-loads-data.system';
 import { LoadEntryFullData } from './models/load-entry-full-data.public';
 import { Command } from './models/command.public';
+import { LoadsSummary } from './models/loads-summary.public';
+import { Data } from 'src/app/models/data.public';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +38,7 @@ export class LoadService extends AbstractStorageService {
   readLoad(handler: Function, data: { id: string }): void {
     this.processRequest(
       this.dataService.readRequest(LoadService.SERVICE_DATA_TYPE, DataService.ENTITY_ENTRY, data),
-      (response: any) => {
+      (response: Data<LoadEntryFullData>) => {
         handler(response.data)
       }
     )
@@ -57,7 +59,7 @@ export class LoadService extends AbstractStorageService {
   readLoadsList(handler: Function): void {
     this.processRequest(
       this.dataService.readRequest(LoadService.SERVICE_DATA_TYPE, DataService.ENTITY_COLLECTION, {}),
-      (response: { data: Array<LoadEntryFullData> }) => {
+      (response: Data<Array<LoadEntryFullData>>) => {
         this.setStorage(response.data)
         handler(response.data)
       }
@@ -66,7 +68,9 @@ export class LoadService extends AbstractStorageService {
   readLoadsSummary(handler: Function): void {
     this.processRequest(
       this.dataService.readRequest(LoadService.SERVICE_DATA_TYPE, DataService.ENTITY_SUMMARY, {}),
-      handler
+      (response: Data<LoadsSummary>) => {
+        handler(response.data)
+      }
     )
   }
 

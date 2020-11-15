@@ -30,21 +30,21 @@ const initialSettings: Array<DBSettingsEntryData> = [
     property: 'keepFilterQuery',
     modifier: 'checkbox',
     stackId: '',
-    value: '1'
+    value: '0'
   },
   {
     id: '',
     property: 'loadsNavButtons',
     modifier: 'checkbox',
     stackId: '',
-    value: '1'
+    value: '0'
   },
   {
     id: '',
     property: 'buttonsHotkeys',
     modifier: 'checkbox',
     stackId: '',
-    value: '1'
+    value: '0'
   }
 ]
 const DB_REVISION: number = 2
@@ -55,17 +55,49 @@ const DB_REVISION: number = 2
 export class MockBackendService {
   private validDbRevisions: Array<number> = [1, 2]
   private db: Storage = window.localStorage
-  private checkDbRev(): boolean {
+  private checkAndPatchDb(): boolean {
     let dbRev: number = parseInt(this.readDBTable('DB_REVISION') || '0')
     let check: boolean = false
 
     if (!dbRev) {
-      this.updateDBTable('DB_REVISION', '' + DB_REVISION)
+      if (this.readDBTable('settings')) {
+        this.patchDb(1)
+      } else {
+        this.updateDBTable('DB_REVISION', '' + DB_REVISION)
+      }
       check = true
     } else {
-      check = this.validDbRevisions.includes(dbRev)
+      if (this.validDbRevisions.includes(dbRev)) {
+        if (dbRev !== DB_REVISION) this.patchDb(dbRev)
+        check = true
+      }
     }
     return check
+  }
+  private patchDb(revision: number): void {
+    let patchFnName: string = 'patchDbRev_' + revision
+    this[patchFnName] && typeof this[patchFnName] === 'function' && this[patchFnName]()
+    this.updateDBTable('DB_REVISION', '' + DB_REVISION)
+  }
+  private patchDbRev_1(): void {
+    let currentSettings: Array<{ id: string; property: string; value: string }> = this.getSettingsCollection().data
+    let updateSettings: Array<DBSettingsEntryData> = []
+    let createSettings: Array<DBSettingsEntryData> = []
+
+    initialSettings.forEach(initSetting => {
+      currentSettings.forEach(currSetting => {
+        if (initSetting.property === currSetting.property) {
+          initSetting.id = currSetting.id
+          initSetting.value = currSetting.value
+          updateSettings.push(initSetting)
+        } else {
+          createSettings.push(initSetting)
+        }
+      })
+    })
+
+    this.updateRowsList('settings', updateSettings)
+    this.createRowsList('settings', createSettings)
   }
   private unique(data: any): any {
     return data && JSON.parse(JSON.stringify(data))
@@ -110,12 +142,7 @@ export class MockBackendService {
     let dbIdPrefix: string = commandOptions.dbIdPrefix || 'demo'
     let collection: Array<DBLoadEntryData> = []
     let ids: Array<string> = []
-    let settingsFromDB: ResponseSettingsCollectionData = this.readAnyTypeAnyEntity({
-      action: 'read',
-      type: 'settings',
-      entity: 'collection',
-      data: {}
-    }) as ResponseSettingsCollectionData
+    let settingsFromDB: ResponseSettingsCollectionData = this.getSettingsCollection()
     let currentDepartment: string = settingsFromDB.data.find(item => item.property === 'currentDepartment').value
 
     for (let i = 0; i < quantity; i++) {
@@ -204,6 +231,14 @@ export class MockBackendService {
     this.updateDBTable(requestData.type, JSON.stringify(parsed))
     return requestData.data.id
   }
+  private updateRowsList(type: string, parsed: Array<DBEntryData>): Array<string> {
+    return parsed.map(data => this.updateRow({
+      action: 'update',
+      type,
+      entity: 'entry',
+      data
+    }))
+  }
   private deleteRow(requestData: RequestEntryData): boolean {
     let raw: string = this.readDBTable(requestData.type)
     let parsed: Array<DBEntryData>
@@ -264,7 +299,7 @@ export class MockBackendService {
       case 'settings':
         return {
           type: requestData.type,
-          data: this.getSettingsEntries(parsed)
+          data: this.getInitialSettingsIfEmpty(parsed)
         } as ResponseSettingsCollectionData
         break;
 
@@ -295,7 +330,7 @@ export class MockBackendService {
         break;
     }
   }
-  private readSummaryData(requestData: RequestData): any {
+  private readSummaryData(requestData: RequestData): ResponseData {
     switch (requestData.type) {
       case 'settings':
         return null
@@ -310,10 +345,14 @@ export class MockBackendService {
     }
   }
   private getLoadEntryData(entry: DBLoadEntryData): ResponseLoadEntryData {
-    if (!entry) return null
+    if (!entry) return {
+      id: null,
+      data: null
+    }
     return {
       id: entry.id,
       data: {
+        id: entry.id,
         status: this.getCollectionEntryById(this.unique(options).statuses, entry.status),
         formed: entry.formed,
         fromDepartment: this.getCollectionEntryById(this.unique(options).departments, entry.fromDepartment),
@@ -328,7 +367,7 @@ export class MockBackendService {
       }
     }
   }
-  private getSettingsEntries(parsed: Array<DBSettingsEntryData>): Array<DBSettingsEntryData> {
+  private getInitialSettingsIfEmpty(parsed: Array<DBSettingsEntryData>): Array<DBSettingsEntryData> {
     if (!parsed || !parsed.length) {
       parsed = this.createRowsList('settings', initialSettings) as Array<DBSettingsEntryData>
       parsed.push({
@@ -339,14 +378,7 @@ export class MockBackendService {
         value: 'yes'
       })
     }
-    return parsed.map(item => {
-      if (!item.modifier) {
-        // Have be moved to separate patch function
-        item.modifier = initialSettings[0].modifier
-        item.stackId = initialSettings[0].stackId
-      }
-      return item
-    })
+    return parsed
   }
   private getLoadEntriesWithTitles(collection: Array<DBLoadEntryData>): Array<ResponseLoadCollectionEntry> {
     if (!collection) collection = []
@@ -360,7 +392,7 @@ export class MockBackendService {
       packaging: this.getCollectionEntryById(this.unique(options).packagings, entry.packaging)
     }))
   }
-  private getLoadsSummary(tableName: string): any {
+  private getLoadsSummary(tableName: string): ResponseLoadsSummary {
     let raw: string = this.readDBTable(tableName)
     let parsed: Array<DBLoadEntryData> = JSON.parse(raw)
     let summary: any = {}
@@ -398,19 +430,12 @@ export class MockBackendService {
         }
       })
     }
-    return summary
+    return { data: summary }
   }
   private updateAnyTypeAnyEntity(requestData: RequestData): Array<string> {
     switch (requestData.entity) {
       case 'collection':
-        return (requestData as RequestCollectionData).data.map(entry =>
-          this.updateRow({
-            action: requestData.action,
-            entity: requestData.entity,
-            type: requestData.type,
-            data: entry
-          })
-        )
+        return this.updateRowsList(requestData.type, (requestData as RequestCollectionData).data)
         break;
 
       case 'entry':
@@ -424,13 +449,21 @@ export class MockBackendService {
   private getCollectionEntryById(collection: Array<any>, id: string): any {
     return collection.find(item => item.id === id)
   }
+  private getSettingsCollection(): ResponseSettingsCollectionData {
+    return this.readAnyTypeAnyEntity({
+      action: 'read',
+      type: 'settings',
+      entity: 'collection',
+      data: {}
+    }) as ResponseSettingsCollectionData
+  }
 
   constructor() { }
 
   mockRequest(subscriber: Subscriber<any>, requestData: RequestData): void {
     let action: Function
 
-    this.checkDbRev()
+    this.checkAndPatchDb()
 
     switch (requestData.action) {
       case 'execcomm':
@@ -535,6 +568,7 @@ interface ResponseEntryData extends ResponseData {
 }
 interface ResponseLoadEntryData extends ResponseEntryData {
   data: {
+    id: string
     status: string
     formed: string
     declaredCost: string
@@ -570,4 +604,16 @@ interface ResponseLoadCollectionEntry {
 }
 interface ResponseSettingsCollectionData extends ResponseCollectionData {
   data: Array<DBSettingsEntryData>
+}
+/* SUMMARY */
+interface ResponseLoadsSummary extends ResponseData {
+  data: {
+    totalRecords: number
+    totalInStorage: number
+    totalWeight: number
+    totalVolume: number
+    totalByDepartment: any
+    totalByService: any
+    totalByPackaging: any
+  }
 }

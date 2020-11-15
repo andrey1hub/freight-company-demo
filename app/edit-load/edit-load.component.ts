@@ -26,6 +26,7 @@ export class EditLoadComponent implements OnInit {
   options: OptionsData = UtilityService.uniqueCopy(options)
   form: FormGroup
   departmentsSync: Array<FormControl> = []
+  staticData: any = UtilityService.uniqueCopy(editLoadFormData.static)
   statusControlData: FormItemSelectData = UtilityService.uniqueCopy(editLoadFormData.status)
   selectControlsData: Array<Array<FormItemSelectData>> = UtilityService.uniqueCopy(editLoadFormData.selects)
   inputControlsData: Array<FormItemInputTextData> = UtilityService.uniqueCopy(editLoadFormData.inputs)

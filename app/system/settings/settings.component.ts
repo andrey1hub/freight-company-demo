@@ -18,6 +18,7 @@ import { FormItemCheckboxData } from 'src/app/models/form-item-checkbox-data.sys
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
+  staticData: any = settingsForm.static
   selectsData: Array<FormItemSelectData> = settingsForm.selects
   checkboxesData: Array<FormItemCheckboxData> = settingsForm.checkboxes
   settings: SettingsListData

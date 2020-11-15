@@ -8,6 +8,7 @@ import { SettingEntryData } from './models/setting-entry-data.public';
 import { options } from './data/options';
 import { OptionItemData } from './models/option-item-data.system';
 import { SettingsListData } from './models/settings-list-data.system';
+import { Data } from './models/data.public';
 
 @Injectable({
   providedIn: 'root'
@@ -57,7 +58,7 @@ export class SettingsService extends AbstractStorageService {
     } else {
       this.processRequest(
         this.dataService.readRequest(SettingsService.SERVICE_DATA_TYPE, DataService.ENTITY_COLLECTION, {}),
-        (response: any) => {
+        (response: Data<Array<SettingEntryData>>) => {
           this.setStorage(response.data)
           handler(this.convertDbEntriesToSettings(response.data))
         }

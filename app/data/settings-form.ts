@@ -1,4 +1,8 @@
 export const settingsForm = {
+  static: {
+    successMessage: 'Settings are saved',
+    bttnSubmit: 'Save'
+  },
   selects: [
     {
       disabled: false,

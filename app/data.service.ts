@@ -6,6 +6,8 @@ import { EntryData } from './models/entry-data.public';
 import { LoadEntryData } from './models/load-entry-data.public';
 import { SettingEntryData } from './models/setting-entry-data.public';
 import { Command } from 'src/app/models/command.public';
+import { LoadsSummary } from './models/loads-summary.public';
+import { Data } from './models/data.public';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +28,7 @@ export class DataService {
 
   constructor(private mockBackendService: MockBackendService) { }
 
-  execCommand(type: string, data: Command): Observable<any> {
+  execCommand(type: string, data: Command): Observable<boolean> {
     return new Observable(subscriber => this.mockBackendService.mockRequest(
       subscriber,
       {
@@ -38,7 +40,7 @@ export class DataService {
     ))
   }
 
-  createRequest(type: string, data: EntryData): Observable<any> {
+  createRequest(type: string, data: EntryData): Observable<string> {
     return new Observable(subscriber => this.mockBackendService.mockRequest(
       subscriber,
       {
@@ -49,7 +51,7 @@ export class DataService {
       }
     ))
   }
-  readRequest(type: string, entity: string, data: { id?: string }): Observable<any> {
+  readRequest(type: string, entity: string, data: { id?: string }): Observable<Data<Array<EntryData> | EntryData | LoadsSummary>> {
     return new Observable(subscriber => this.mockBackendService.mockRequest(
       subscriber,
       {
@@ -60,7 +62,7 @@ export class DataService {
       }
     ))
   }
-  updateRequest(type: string, entity: string, data: LoadEntryData | Array<SettingEntryData>): Observable<any> {
+  updateRequest(type: string, entity: string, data: LoadEntryData | Array<SettingEntryData>): Observable<Array<string>> {
     return new Observable(subscriber => this.mockBackendService.mockRequest(
       subscriber,
       {
@@ -71,7 +73,7 @@ export class DataService {
       }
     ))
   }
-  deleteRequest(type: string, data: { id: string }): Observable<any> {
+  deleteRequest(type: string, data: { id: string }): Observable<boolean> {
     return new Observable(subscriber => this.mockBackendService.mockRequest(
       subscriber,
       {

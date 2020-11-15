@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { LoadService } from '../load.service';
 import { LoadEntryFullData } from '../models/load-entry-full-data.public';
+import { appData } from '../data/app';
 
 @Component({
   selector: 'app-load',
@@ -15,6 +16,7 @@ export class LoadComponent implements OnInit {
   loadInStorageStatusId: string = '1'
   showLoad: boolean = false
   showErrorMessage: boolean = false
+  staticData: any = appData.load
 
   constructor(
     private router: Router,

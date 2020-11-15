@@ -1,7 +1,7 @@
+import { EntryData } from './entry-data.public';
 import { OptionItemData } from './option-item-data.system';
 
-export interface LoadEntryFullData {
-  id: string
+export interface LoadEntryFullData extends EntryData {
   fromDepartment: OptionItemData
   packaging: OptionItemData
   service: OptionItemData

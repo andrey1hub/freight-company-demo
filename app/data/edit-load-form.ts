@@ -1,4 +1,15 @@
 export const editLoadFormData = {
+  static: {
+    edit: {
+      header: 'Edit load ID: ',
+      errMessage: ['Load ID: ', ' not found in DB'],
+      bttnSubmit: 'Edit Load'
+    },
+    new: {
+      header: 'Create new load',
+      bttnSubmit: 'Create Load'
+    }
+  },
   status: {
     disabled: false,
     required: true,

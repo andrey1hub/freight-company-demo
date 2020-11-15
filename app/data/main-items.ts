@@ -1,5 +1,9 @@
 export const mainItemsData = {
-  static: [
+  static: {
+    firstRunText: ['First run of ', 'This software uses local storage as a database. Consider this if you are going to use ', ' for managing big amount of data.', 'It does not have backend and server, all computing goes in your browser.'],
+    header: 'Database summary'
+  },
+  text: [
     [
       {
         classes: 'col-sm-6',

@@ -1,20 +1,20 @@
 <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
   <div class="container-xl">
-    <div *ngIf="showSuccessMessage" class="alert alert-success app-row text-center" role="alert">
-      Done
-    </div>
     <app-item-datepicker [data]="formedSpan" (controlOutputEvent)="addFormControl($event)"></app-item-datepicker>
     <div class="row">
       <div class="col-4 col-sm-3 col-md-2">&nbsp;</div>
       <div class="col-8 col-sm-9 col-md-10 mb-3 px-0">
-        <small class="form-text text-muted">{{ formedSpanDescription[0] }}&nbsp;<span class="d-block d-sm-inline"></span>{{ formedSpanDescription[1] }}</small>
+        <small class="form-text text-muted">
+          <span class="d-block d-sm-inline">{{ formedSpanDescription[0] }}</span>
+          <span class="d-block d-sm-inline">{{ formedSpanDescription[1] }}</span>
+        </small>
       </div>
     </div>
     <div class="row">
       <app-item-input-text *ngFor="let item of inputsData" class="{{ item.classes }}" [data]="item" (controlOutputEvent)="addFormControl($event)"></app-item-input-text>
     </div>
     <div class="w-50 pt-3 mx-auto">
-      <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">Generate</button>
+      <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">{{ bttnSubmit }}</button>
     </div>
   </div>
 </form>

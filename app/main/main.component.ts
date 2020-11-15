@@ -5,7 +5,7 @@ import { SettingsService } from '../settings.service';
 import { UtilityService } from 'src/app/utility.service';
 import { MainData } from '../models/main-data.system';
 import { mainItemsData } from '../data/main-items';
-import { MainItemStaticData } from '../models/main-item-static-data.system';
+import { MainItemTextData } from '../models/main-item-text-data.system';
 import { MainItemSelectableData } from '../models/main-item-selectable-data.system';
 import { options } from '../data/options';
 import { LoadsSummary } from '../models/loads-summary.public';
@@ -18,7 +18,8 @@ import { SettingsListData } from '../models/settings-list-data.system';
 })
 export class MainComponent implements OnInit {
   mainData: MainData
-  mainStaticItemsData: Array<Array<MainItemStaticData>> = UtilityService.uniqueCopy(mainItemsData.static)
+  staticData: any = UtilityService.uniqueCopy(mainItemsData.static)
+  mainTextItemsData: Array<Array<MainItemTextData>> = UtilityService.uniqueCopy(mainItemsData.text)
   mainSelectableItemsData: Array<MainItemSelectableData> = UtilityService.uniqueCopy(mainItemsData.selectable)
   appName: string = UtilityService.APP_NAME
   appVersion: string = UtilityService.APP_VERSION

@@ -14,11 +14,11 @@ import { ItemFormControl } from 'src/app/models/item-form-control.system';
   styleUrls: ['./loads-generator.component.scss']
 })
 export class LoadsGeneratorComponent implements OnInit {
+  bttnSubmit: string = loadsgenForm.bttnSubmit
   formedSpanDescription: Array<string> = loadsgenForm.formedSpanDescription
   formedSpan: FormItemDatepicker = loadsgenForm.formedSpan
   inputsData: Array<FormItemInputTextData> = loadsgenForm.inputs
   form: FormGroup
-  showSuccessMessage: false
 
   constructor(private loadService: LoadService, private router: Router) { }
 

@@ -1,8 +1,11 @@
-<h3>{{ loadId ? 'Edit load ID: '.concat(loadId) : 'Create new load' }}</h3>
+<h3>{{ loadId ? staticData.edit.header.concat(loadId) : staticData.new.header }}</h3>
 <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
   <div class="container-xl">
-    <div *ngIf="showErrorMessage" class="alert alert-danger app-row" role="alert">
-      <h5>Load ID: {{ loadId }} not&nbsp;found in DB</h5>
+    <div *ngIf="showErrorMessage" class="alert alert-danger border border-danger app-row" role="alert">
+      <h5 class="mb-0">
+        <span class="text-nowrap">{{ staticData.edit.errMessage[0].concat(loadId) }}</span>
+        <span class="text-nowrap">{{ staticData.edit.errMessage[1] }}</span>
+      </h5>
     </div>
     <div *ngIf="loadId" class="row">
       <input type="hidden" formControlName="formed">
@@ -15,7 +18,7 @@
       <app-item-input-text *ngFor="let item of inputControlsData" class="{{ item.classes }}" [data]="item" (controlOutputEvent)="addFormControl($event)"></app-item-input-text>
     </div>
     <div class="w-50 pt-3 pt-sm-0 mx-auto">
-      <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">{{ loadId ? 'Edit' : 'Create' }} Load</button>
+      <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">{{ staticData[loadId ? 'edit' : 'new'].bttnSubmit }}</button>
     </div>
   </div>
 </form>

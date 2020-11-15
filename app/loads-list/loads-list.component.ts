@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { LoadService } from '../load.service';
 import { LoadEntryFullData } from '../models/load-entry-full-data.public';
 import { FilterLoadsData } from 'src/app/models/filter-loads-data.system';
+import { appData } from '../data/app';
 
 @Component({
   selector: 'app-loads-list',
@@ -13,6 +14,7 @@ export class LoadsListComponent implements OnInit {
   loads: Array<LoadEntryFullData>
   loadInStorageStatusId: string = '1'
   loadsHandler: Function = (loadsData: Array<LoadEntryFullData>) => { this.loads = loadsData }
+  staticData: any = appData.loadsList
 
   constructor(private loadService: LoadService) { }
 

@@ -1,12 +1,15 @@
-<h3>Load ID: {{ loadId }} <span *ngIf="showErrorMessage">not&nbsp;found in DB</span></h3>
+<h3>
+  <span class="text-nowrap">{{ staticData.header[0].concat(loadId) }}</span>
+  <span *ngIf="showErrorMessage" class="text-nowrap">{{ staticData.header[1] }}</span>
+</h3>
 <div class="pt-2">
   <div *ngIf="showLoad">
-    <p>Formed {{ load.formed | date: 'medium' }}</p>
+    <p>{{ staticData.formed.concat(load.formed | date: 'medium') }}</p>
     <div class="container-xl">
       <div class="row">
         <div class="col-md-6 mb-2">
           <div class="row">
-            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">Status:</div>
+            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">{{ staticData.status }}</div>
             <div class="col-8 px-0">
               <h5 class="mb-0">
                 <span class="badge badge-{{ load.status.id === loadInStorageStatusId ? 'info' : 'light' }}">{{ load.status | title }}</span>
@@ -16,7 +19,7 @@
         </div>
         <div class="col-md-6 mb-2">
           <div class="row">
-            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">Declared cost:</div>
+            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">{{ staticData.cost }}</div>
             <div class="col-8 px-0">{{ load.declaredCost || 0 | currency: 'USD' }}</div>
           </div>
         </div>
@@ -24,13 +27,13 @@
       <div class="row">
         <div class="col-md-6 mb-2">
           <div class="row">
-            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">From:</div>
+            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">{{ staticData.from }}</div>
             <div class="col-8 px-0">{{ load.fromDepartment | title }}</div>
           </div>
         </div>
         <div class="col-md-6 mb-2">
           <div class="row">
-            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">To:</div>
+            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">{{ staticData.to }}</div>
             <div class="col-8 px-0">{{ load.toDepartment | title }}</div>
           </div>
         </div>
@@ -38,13 +41,13 @@
       <div class="row">
         <div class="col-md-6 mb-2">
           <div class="row">
-            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">Service:</div>
+            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">{{ staticData.service }}</div>
             <div class="col-8 px-0">{{ load.service | title }}</div>
           </div>
         </div>
         <div class="col-md-6 mb-2">
           <div class="row">
-            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">Packaging:</div>
+            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">{{ staticData.packaging }}</div>
             <div class="col-8 px-0">{{ load.packaging | title }}</div>
           </div>
         </div>
@@ -52,21 +55,21 @@
       <div class="row">
         <div class="col-md-6 mb-2">
           <div class="row">
-            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">Dimesions:</div>
+            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">{{ staticData.dimesions }}</div>
             <div class="col-8 px-0">{{ load.length }} x {{ load.width }} x {{ load.height }}</div>
           </div>
         </div>
         <div class="col-md-6 mb-2">
           <div class="row">
-            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">Weight:</div>
+            <div class="col-4 px-0 pr-sm-2 font-weight-bolder">{{ staticData.weight }}</div>
             <div class="col-8 px-0">{{ load.weight }}</div>
           </div>
         </div>
       </div>
       <div class="app-row clearfix pt-2">
-        <div class="btn-group btn-group-lg float-right" role="group" aria-label="Load controls">
-          <button [disabled]="load.status.id !== loadInStorageStatusId" routerLink="/loads/{{ loadId }}/edit" class="btn btn-light px-5">Edit</button>
-          <button [disabled]="load.status.id !== loadInStorageStatusId" routerLink="/loads/{{ loadId }}" (click)="deleteLoad()" class="btn btn-warning">Delete</button>
+        <div class="btn-group btn-group-lg float-right">
+          <button [disabled]="load.status.id !== loadInStorageStatusId" routerLink="/loads/{{ loadId }}/edit" class="btn btn-light px-5">{{ staticData.bttnEdit }}</button>
+          <button [disabled]="load.status.id !== loadInStorageStatusId" routerLink="/loads/{{ loadId }}" (click)="deleteLoad()" class="btn btn-warning">{{ staticData.bttnDelete }}</button>
         </div>
       </div>
     </div>
