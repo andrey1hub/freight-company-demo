@@ -1,7 +1,7 @@
 <h3>{{ loadId ? staticData.edit.header.concat(loadId) : staticData.new.header }}</h3>
 <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
   <div class="container-xl">
-    <div *ngIf="showErrorMessage" class="alert alert-danger border border-danger app-row" role="alert">
+    <div *ngIf="showErrorMessage" class="alert alert-danger border border-danger app-row">
       <h5 class="mb-0">
         <span class="text-nowrap">{{ staticData.edit.errMessage[0].concat(loadId) }}</span>
         <span class="text-nowrap">{{ staticData.edit.errMessage[1] }}</span>

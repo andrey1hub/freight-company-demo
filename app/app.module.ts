@@ -23,6 +23,7 @@ import { ItemDatepickerComponent } from './items/item-datepicker/item-datepicker
 import { SettingsComponent } from './system/settings/settings.component';
 import { LoadsGeneratorComponent } from './system/loads-generator/loads-generator.component';
 import { ItemCheckboxComponent } from './items/item-checkbox/item-checkbox.component';
+import { ExportImportDbComponent } from './system/export-import-db/export-import-db.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { ItemCheckboxComponent } from './items/item-checkbox/item-checkbox.compo
     ItemDatepickerComponent,
     SettingsComponent,
     LoadsGeneratorComponent,
-    ItemCheckboxComponent
+    ItemCheckboxComponent,
+    ExportImportDbComponent
   ],
   imports: [
     BrowserModule,

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 import { loadsgenForm } from 'src/app/data/loadsgen-form';
 import { LoadService } from 'src/app/load.service';
+import { CommandService } from 'src/app/command.service';
 import { FormItemDatepicker } from 'src/app/models/form-item-datepicker-data.system';
 import { FormItemInputTextData } from 'src/app/models/form-item-input-text-data.system';
 import { ItemFormControl } from 'src/app/models/item-form-control.system';
@@ -14,13 +15,12 @@ import { ItemFormControl } from 'src/app/models/item-form-control.system';
   styleUrls: ['./loads-generator.component.scss']
 })
 export class LoadsGeneratorComponent implements OnInit {
-  bttnSubmit: string = loadsgenForm.bttnSubmit
-  formedSpanDescription: Array<string> = loadsgenForm.formedSpanDescription
+  staticData: any = loadsgenForm.static
   formedSpan: FormItemDatepicker = loadsgenForm.formedSpan
   inputsData: Array<FormItemInputTextData> = loadsgenForm.inputs
   form: FormGroup
 
-  constructor(private loadService: LoadService, private router: Router) { }
+  constructor(private commandService: CommandService, private router: Router) { }
 
   ngOnInit(): void {
     this.form = new FormGroup({})
@@ -29,10 +29,11 @@ export class LoadsGeneratorComponent implements OnInit {
     this.form.addControl(control.name, control.instance)
   }
   onFormSubmit(): void {
-    this.loadService.execCommand(
+    this.commandService.execCommand(
       (isGenerated: boolean) => { if (isGenerated) this.router.navigate(['loads']) },
+      LoadService.SERVICE_DATA_TYPE,
       {
-        command: LoadService.COMMAND_GENERATE,
+        command: CommandService.COMMAND_GENERATE,
         options: this.form.getRawValue()
       }
     )

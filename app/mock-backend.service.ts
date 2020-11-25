@@ -48,6 +48,11 @@ const initialSettings: Array<DBSettingsEntryData> = [
   }
 ]
 const DB_REVISION: number = 2
+const DB_SCHEMA: DbSchema = {
+  settings: ['id', 'property', 'modifier', 'stackId', 'value'],
+  load: ['id', 'status', 'formed', 'declaredCost', 'fromDepartment', 'height', 'length', 'packaging', 'service', 'toDepartment', 'weight', 'width'],
+  DB_REVISION: 'number'
+}
 
 @Injectable({
   providedIn: 'root'
@@ -99,6 +104,50 @@ export class MockBackendService {
     this.updateRowsList('settings', updateSettings)
     this.createRowsList('settings', createSettings)
   }
+  private checkDbSchema(dbDump: DbDump): boolean {
+    let passed: boolean = null
+
+    Object.keys(DB_SCHEMA).forEach(key => {
+      if (passed !== false) {
+        let table: Array<DBEntryData> | number = dbDump[key]
+
+        if (table) {
+          if (typeof table === 'number') {
+            passed = table === DB_REVISION
+          } else {
+            passed = table.every(entry => {
+              return Object.keys(entry).every(entryKey => {
+                return DB_SCHEMA[key].findIndex((schemaKey: string) => entryKey === schemaKey) >= 0 && typeof entry[entryKey] === 'string'
+              })
+            })
+          }
+        } else {
+          passed = false
+        }
+      }
+    })
+
+    return passed
+  }
+  private dumpDb(): DbDump {
+    let dbDump: any = {}
+
+    Object.keys(DB_SCHEMA).forEach(key => {
+      let raw: string = this.readDBTable(key)
+
+      if (raw) {
+        dbDump[key] = JSON.parse(raw)
+      } else {
+        if (key === 'DB_REVISION') {
+          dbDump.DB_REVISION = DB_REVISION
+        } else {
+          dbDump[key] = []
+        }
+      }
+    })
+
+    return dbDump
+  }
   private unique(data: any): any {
     return data && JSON.parse(JSON.stringify(data))
   }
@@ -120,10 +169,18 @@ export class MockBackendService {
   private randomItemOfStackPicker(stack: Array<any> | number): any {
     return typeof stack === 'number' ? Math.floor(Math.random() * stack) + 1 : stack.length && stack[Math.floor(Math.random() * stack.length)]
   }
-  private execCommand(requestData: RequestCommandData): boolean {
+  private execCommand(requestData: RequestCommandData): boolean | string {
     switch (requestData.data.command) {
       case 'generate':
         return this.processGenerateComm(requestData.type, requestData.data.options)
+        break;
+
+      case 'dump':
+        return this.processDumpComm()
+        break;
+
+      case 'restore':
+        return this.processRestoreComm(requestData.data.options.dump)
         break;
 
       default:
@@ -131,7 +188,22 @@ export class MockBackendService {
         break;
     }
   }
-  private processGenerateComm(type: string, commandOptions: CommandOptions): boolean {
+  private processGenerateComm(type: string, commandOptions: CommandOptions): boolean | string {
+    switch (type) {
+      case 'load':
+        return this.processGenerateLoadComm(type, commandOptions)
+        break;
+
+      case 'string':
+        return this.processGenerateStringComm()
+        break;
+
+      default:
+        return null
+        break;
+    }
+  }
+  private processGenerateLoadComm(type: string, commandOptions: CommandOptions): boolean {
     if (
       commandOptions.formedSpanStart && commandOptions.formedSpanEnd &&
       commandOptions.formedSpanStart.getTime() > commandOptions.formedSpanEnd.getTime()
@@ -174,6 +246,33 @@ export class MockBackendService {
     ids = this.createRowsList(type, collection, dbIdPrefix, 'formed').map(item => item.id)
 
     return ids.length === collection.length
+  }
+  private processGenerateStringComm(): string {
+    let date: Date = new Date()
+    return 'fcdemo-db-revision-' + DB_REVISION + '-' + date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + '-' + this.mockUIDGenerator() + '.json'
+  }
+  private processDumpComm(): boolean | string {
+    let dbDump: DbDump = this.dumpDb()
+    return this.checkDbSchema(dbDump) && JSON.stringify(dbDump)
+  }
+  private processRestoreComm(dump: string): boolean {
+    let result: boolean = false
+    let parseError: boolean = false
+    let parsed: DbDump
+
+    try {
+      parsed = JSON.parse(dump)
+    } catch (error) {
+      parseError = true
+    }
+
+    if (!parseError && parsed.DB_REVISION && parsed.DB_REVISION === DB_REVISION && this.checkDbSchema(parsed)) {
+      Object.keys(DB_SCHEMA).forEach(key => {
+        this.updateDBTable(key, JSON.stringify(parsed[key]))
+      })
+      result = true
+    }
+    return result
   }
   private createRow(requestData: RequestData, dbIdPrefix?: string, sortType?: string): string {
     let raw: string = this.readDBTable(requestData.type)
@@ -501,6 +600,16 @@ interface SortHandlers {
   formed: Function
 }
 /* DB DATA */
+interface DbSchema {
+  settings: Array<string>
+  load: Array<string>
+  DB_REVISION: string
+}
+interface DbDump {
+  settings: Array<DBSettingsEntryData>
+  load: Array<DBLoadEntryData>
+  DB_REVISION: number
+}
 interface DBEntryData {
   id: string
 }
@@ -542,6 +651,7 @@ interface CommandOptions {
   formedSpanEnd: Date
   quantity: number
   dbIdPrefix: string
+  dump: string
 }
 interface RequestEntryData extends RequestData {
   data: {

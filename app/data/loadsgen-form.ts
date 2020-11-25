@@ -1,6 +1,9 @@
 export const loadsgenForm = {
-  bttnSubmit: 'Generate',
-  formedSpanDescription: ['Default span:', ' 30 days before current or end (if set) date'],
+  static: {
+    header: 'Loads Generator:',
+    bttnSubmit: 'Generate',
+    formedSpanDescription: ['Default span:', ' 30 days before current or end (if set) date']
+  },
   formedSpan: {
     foldable: false,
     classes: 'col-md-12',

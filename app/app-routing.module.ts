@@ -8,6 +8,7 @@ import { LoadsListComponent } from './loads-list/loads-list.component';
 import { SystemComponent } from './system/system.component';
 import { SettingsComponent } from './system/settings/settings.component';
 import { LoadsGeneratorComponent } from './system/loads-generator/loads-generator.component';
+import { ExportImportDbComponent } from './system/export-import-db/export-import-db.component';
 
 const routes: Routes = [
   { path: '', component: MainComponent },
@@ -26,6 +27,10 @@ const routes: Routes = [
       {
         path: 'loadsgen',
         component: LoadsGeneratorComponent
+      },
+      {
+        path: 'db',
+        component: ExportImportDbComponent
       }
     ]
   },

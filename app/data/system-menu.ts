@@ -6,5 +6,9 @@ export const systemMenu = [
   {
     label: 'Loads Generator',
     link: '/system/loadsgen'
+  },
+  {
+    label: 'Export/Import DB',
+    link: '/system/db'
   }
 ]

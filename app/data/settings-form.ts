@@ -1,5 +1,6 @@
 export const settingsForm = {
   static: {
+    header: 'Settings:',
     successMessage: 'Settings are saved',
     bttnSubmit: 'Save'
   },

@@ -1,0 +1,20 @@
+.file-input {
+  position: relative;
+  width: 100%;
+  height: calc(1.5em + 1rem + 2px);
+  font-size: 1.25rem;
+  overflow: hidden;
+  input[type='file'] {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: calc(1.5em + 1rem + 2px);
+    margin: 0;
+    opacity: 0;
+  }
+  input[type='text'] {
+    position: absolute;
+    top: 0;
+    z-index: 1;
+  }
+}

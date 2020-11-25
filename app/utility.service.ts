@@ -8,7 +8,7 @@ import { MenuBundle } from 'src/app/models/menu-bundle.system';
 })
 export class UtilityService {
   static APP_NAME: string = 'Freight Company Demo'
-  static APP_VERSION: string = 'v1.5.1'
+  static APP_VERSION: string = 'v1.6.0'
 
   static FILTER_AUDIT_TIME: number = 200
   static FILTER_ANY_OPTION_ID: string = 'filter-any-option'

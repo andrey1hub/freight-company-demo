@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import { DataService } from "./data.service";
+import { DataService } from './data.service';
 import { AbstractStorageService } from './abstract-storage.service';
 import { UtilityService } from 'src/app/utility.service';
 import { LoadEntryData } from './models/load-entry-data.public';
 import { FilterLoadsData } from './models/filter-loads-data.system';
 import { LoadEntryFullData } from './models/load-entry-full-data.public';
-import { Command } from './models/command.public';
 import { LoadsSummary } from './models/loads-summary.public';
 import { Data } from 'src/app/models/data.public';
 
@@ -14,19 +13,10 @@ import { Data } from 'src/app/models/data.public';
   providedIn: 'root'
 })
 export class LoadService extends AbstractStorageService {
-  private static SERVICE_DATA_TYPE: string = 'load'
-
-  static COMMAND_GENERATE: string = DataService.COMMAND_GENERATE
+  static SERVICE_DATA_TYPE: string = 'load'
 
   constructor(private dataService: DataService) {
     super()
-  }
-
-  execCommand(handler: Function, data: Command): void {
-    this.processRequest(
-      this.dataService.execCommand(LoadService.SERVICE_DATA_TYPE, data),
-      handler
-    )
   }
 
   createLoad(handler: Function, data: LoadEntryData): void {

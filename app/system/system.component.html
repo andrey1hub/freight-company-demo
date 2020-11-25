@@ -1,7 +1,10 @@
 <h3>{{ staticData.header }}</h3>
-<ul class="nav nav-tabs mb-4 pt-2">
-  <li *ngFor="let item of menu?.stack" class="nav-item">
-    <a class="nav-link" routerLink="{{ item.link }}" [class.active]="menu.linksStatus[item.id]" (click)="menu.setLinkActive(item.id)">{{ item.label }}</a>
-  </li>
-</ul>
+<div class="container-xl page-controls">
+  <i class="icon-container material-icons-round border border-secondary rounded" (click)="menuShowToggle()">
+    <i title="{{ staticData.menu }}">&#xe5d2;</i>
+  </i>
+  <div class="dropdown-menu" [ngStyle]="{'display': menuShow ? 'block' : 'none'}">
+    <a *ngFor="let item of menu?.stack" class="dropdown-item" routerLink="{{ item.link }}" [class.active]="menu.linksStatus[item.id]" (click)="menuShowToggle(item.id)">{{ item.label }}</a>
+  </div>
+</div>
 <router-outlet></router-outlet>

@@ -23,6 +23,17 @@ export const appData: any = {
     packaging: 'Packaging:'
   },
   system: {
-    header: 'System'
+    header: 'System',
+    menu: 'System Menu'
+  },
+  systemDb: {
+    header: 'Export/Import DB:',
+    bttnExport: 'Export',
+    bttnImport: 'Import',
+    labelImport: 'Choose file',
+    exportErrorMsg: 'Error while exporting DB.',
+    importErrorMsg: 'Error while importing DB.',
+    importSuccessMsg: 'DB imported successfully.',
+    dbRevisionMsg: 'Acceptable DB revision: '
   }
 }

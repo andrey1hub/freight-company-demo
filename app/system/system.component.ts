@@ -13,12 +13,17 @@ import { appData } from '../data/app';
 })
 export class SystemComponent implements OnInit {
   menu: MenuBundle
+  menuShow: boolean = false
   staticData: any = appData.system
 
   constructor(private router: Router) { }
 
   ngOnInit(): void {
     this.menu = UtilityService.buildMenu(systemMenu, systemMenu.findIndex(item => this.router.isActive(item.link, true)))
+  }
+  menuShowToggle(activeLinkId?: string): void {
+    if (activeLinkId) this.menu.setLinkActive(activeLinkId)
+    this.menuShow = !this.menuShow
   }
 
 }

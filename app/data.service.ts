@@ -24,11 +24,9 @@ export class DataService {
   static ENTITY_COLLECTION: string = 'collection'
   static ENTITY_ENTRY: string = 'entry'
 
-  static COMMAND_GENERATE: string = 'generate'
-
   constructor(private mockBackendService: MockBackendService) { }
 
-  execCommand(type: string, data: Command): Observable<boolean> {
+  execCommand(type: string, data: Command): Observable<boolean | string> {
     return new Observable(subscriber => this.mockBackendService.mockRequest(
       subscriber,
       {

@@ -1,0 +1,37 @@
+<h5 class="sub-header pt-2">{{ staticData.header }}</h5>
+<div class="container-xl">
+  <div class="row">
+    <div class="col-12">
+      <div *ngIf="showImportSuccessMsg" class="alert alert-success border border-success text-success app-row text-center">{{ staticData.importSuccessMsg }}</div>
+      <div *ngIf="showExportErrorMsg || showImportErrorMsg" class="alert alert-danger border border-danger app-row text-center">{{ showExportErrorMsg && staticData.exportErrorMsg || showImportErrorMsg && staticData.importErrorMsg }}</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 mb-3">
+      <div class="row">
+        <div class="col-8 pl-0 pr-2 pr-sm-3">
+          <input type="text" class="form-control form-control-lg" [value]="exportFileName" [title]="exportFileName" readonly>
+        </div>
+        <div class="col-4 px-0">
+          <button type="submit" class="btn btn-success btn-lg w-100" (click)="exportDb()">{{ staticData.bttnExport }}</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <form [formGroup]="formImport">
+        <div class="row">
+          <div class="col-8 pl-0 pr-2 pr-sm-3">
+            <div class="file-input">
+              <input type="file" [title]="importFileName" accept="application/json, .json" id="import-file" formControlName="file">
+              <input type="text" class="form-control form-control-lg" [value]="importFileName" placeholder="{{ staticData.labelImport }}">
+            </div>
+            <div class="form-text text-muted">{{ staticData.dbRevisionMsg.concat(dbRevision) }}</div>
+          </div>
+          <div class="col-4 px-0">
+            <button type="submit" [disabled]="!formImport.valid" class="btn btn-success btn-lg w-100" (click)="importDb()">{{ staticData.bttnImport }}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

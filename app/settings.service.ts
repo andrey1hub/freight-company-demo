@@ -14,7 +14,7 @@ import { Data } from './models/data.public';
   providedIn: 'root'
 })
 export class SettingsService extends AbstractStorageService {
-  private static SERVICE_DATA_TYPE: string = 'settings'
+  static SERVICE_DATA_TYPE: string = 'settings'
 
   private convertDbEntriesToSettings(data: Array<SettingEntryData>): SettingsListData {
     let settingsListData: any = {}

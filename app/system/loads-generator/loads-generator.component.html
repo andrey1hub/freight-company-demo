@@ -1,3 +1,4 @@
+<h5 class="sub-header pt-2">{{ staticData.header }}</h5>
 <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
   <div class="container-xl">
     <app-item-datepicker [data]="formedSpan" (controlOutputEvent)="addFormControl($event)"></app-item-datepicker>
@@ -5,8 +6,8 @@
       <div class="col-4 col-sm-3 col-md-2">&nbsp;</div>
       <div class="col-8 col-sm-9 col-md-10 mb-3 px-0">
         <small class="form-text text-muted">
-          <span class="d-block d-sm-inline">{{ formedSpanDescription[0] }}</span>
-          <span class="d-block d-sm-inline">{{ formedSpanDescription[1] }}</span>
+          <span class="d-block d-sm-inline">{{ staticData.formedSpanDescription[0] }}</span>
+          <span class="d-block d-sm-inline">{{ staticData.formedSpanDescription[1] }}</span>
         </small>
       </div>
     </div>
@@ -14,7 +15,7 @@
       <app-item-input-text *ngFor="let item of inputsData" class="{{ item.classes }}" [data]="item" (controlOutputEvent)="addFormControl($event)"></app-item-input-text>
     </div>
     <div class="w-50 pt-3 mx-auto">
-      <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">{{ bttnSubmit }}</button>
+      <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">{{ staticData.bttnSubmit }}</button>
     </div>
   </div>
 </form>
