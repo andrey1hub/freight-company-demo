@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { appData } from 'src/app/data/app';
-import { CommandService } from 'src/app/command.service';
+import { CommandService } from 'src/app/services/command.service';
 
 @Component({
   selector: 'app-export-import-db',

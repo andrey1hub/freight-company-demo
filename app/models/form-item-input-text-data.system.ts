@@ -1,12 +1,9 @@
-export interface FormItemInputTextData {
+import { FormItemData } from "./form-item-data.system";
+
+export interface FormItemInputTextData extends FormItemData {
   min: number
-  disabled: boolean
-  required: boolean
   isRow: boolean
   rowClasses: string
-  classes: string
-  label: string
-  property: string
   labelClasses: string
   inputClasses: string
   validPattern: string

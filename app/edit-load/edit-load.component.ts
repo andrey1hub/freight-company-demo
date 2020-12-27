@@ -2,18 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { SettingsService } from '../settings.service';
-import { LoadService } from '../load.service';
-import { UtilityService } from 'src/app/utility.service';
-import { ItemFormControl } from '../models/item-form-control.system';
-import { FormItemInputTextData } from '../models/form-item-input-text-data.system';
-import { FormItemSelectData } from '../models/form-item-select-data.system';
-import { editLoadFormData } from '../data/edit-load-form';
-import { options } from '../data/options';
-import { OptionsData } from '../models/options-data.system';
-import { LoadEntryData } from '../models/load-entry-data.public';
-import { SettingsListData } from '../models/settings-list-data.system';
-import { LoadEntryFullData } from '../models/load-entry-full-data.public';
+import { SettingsService } from 'src/app/services/settings.service';
+import { LoadService } from 'src/app/services/load.service';
+import { UtilityService } from 'src/app/services/utility.service';
+import { ItemFormControl } from 'src/app/models/item-form-control.system';
+import { FormItemInputTextData } from 'src/app/models/form-item-input-text-data.system';
+import { FormItemSelectData } from 'src/app/models/form-item-select-data.system';
+import { editLoadFormData } from 'src/app/data/edit-load-form';
+import { options } from 'src/app/data/options';
+import { OptionsData } from 'src/app/models/options-data.system';
+import { LoadEntryData } from 'src/app/models/load-entry-data.public';
+import { SettingsListData } from 'src/app/models/settings-list-data.system';
+import { LoadEntryFullData } from 'src/app/models/load-entry-full-data.public';
 
 @Component({
   selector: 'app-edit-load',

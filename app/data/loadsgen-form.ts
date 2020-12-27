@@ -5,9 +5,12 @@ export const loadsgenForm = {
     formedSpanDescription: ['Default span:', ' 30 days before current or end (if set) date']
   },
   formedSpan: {
+    disabled: false,
+    required: false,
     foldable: false,
     classes: 'col-md-12',
     label: 'Formed span',
+    property: 'formedSpanStart,formedSpanEnd',
     propertyStart: 'formedSpanStart',
     propertyEnd: 'formedSpanEnd',
     labelClasses: 'col-4 col-sm-3 col-md-2 px-0 pt-2',
@@ -19,7 +22,7 @@ export const loadsgenForm = {
   },
   inputs: [
     {
-      classes: 'col-sm-6 mb-3 mb-sm-0',
+      classes: 'col-sm-6 mb-3',
       label: 'Quantity',
       property: 'quantity',
       disabled: false,
@@ -33,7 +36,7 @@ export const loadsgenForm = {
       placeHolder: 'Default: 100'
     },
     {
-      classes: 'col-sm-6',
+      classes: 'col-sm-6 mb-3',
       label: 'DB id prefix',
       property: 'dbIdPrefix',
       disabled: false,

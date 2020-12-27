@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 
 import { appMenu } from 'src/app/data/app-menu';
-import { MenuBundle } from '../models/menu-bundle.system';
-import { UtilityService } from '../utility.service';
+import { MenuBundle } from 'src/app/models/menu-bundle.system';
+import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
   selector: 'app-menu',

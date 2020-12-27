@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { LoadService } from '../load.service';
-import { LoadEntryFullData } from '../models/load-entry-full-data.public';
+import { LoadService } from 'src/app/services/load.service';
+import { LoadEntryFullData } from 'src/app/models/load-entry-full-data.public';
 import { FilterLoadsData } from 'src/app/models/filter-loads-data.system';
-import { appData } from '../data/app';
+import { appData } from 'src/app/data/app';
 
 @Component({
   selector: 'app-loads-list',

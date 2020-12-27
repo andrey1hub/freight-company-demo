@@ -1,4 +1,4 @@
-<h3>{{ staticData.header }}</h3>
+<h3>{{ staticData.header }} <span *ngIf="loads" class="badge badge-light">{{ loads.length }}</span></h3>
 <app-loads-filter (filterEvent)="filterLoadsList($event)"></app-loads-filter>
 <div class="container-xl pt-2">
   <div class="row">

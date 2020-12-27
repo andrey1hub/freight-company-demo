@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 
-import { LoadService } from '../load.service';
-import { LoadEntryFullData } from '../models/load-entry-full-data.public';
-import { appData } from '../data/app';
+import { LoadService } from 'src/app/services/load.service';
+import { LoadEntryFullData } from 'src/app/models/load-entry-full-data.public';
+import { appData } from 'src/app/data/app';
+import { ConfirmDialogComponent } from 'src/app/mat/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-load',
@@ -19,6 +21,7 @@ export class LoadComponent implements OnInit {
   staticData: any = appData.load
 
   constructor(
+    public dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
     private loadService: LoadService
@@ -45,12 +48,26 @@ export class LoadComponent implements OnInit {
     )
   }
   deleteLoad() {
-    if (window.confirm('Are you sure you want delete this load?')) {
-      this.loadService.deleteLoad(
-        (isDeleted: boolean) => { if (isDeleted) this.router.navigate(['loads']) },
-        { id: this.loadId }
-      )
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '80%',
+      data: {
+        header: this.staticData.confirmHeader,
+        text: this.staticData.confirmText,
+        bttnCancel: this.staticData.confirmCancel,
+        bttnOk: this.staticData.confirmDelete,
+        handler: () => {
+          this.loadService.deleteLoad(
+            (isDeleted: boolean) => {
+              if (isDeleted) {
+                dialogRef.close()
+                this.router.navigate(['loads'])
+              }
+            },
+            { id: this.loadId }
+          )
+        }
+      }
+    })
   }
 
 }

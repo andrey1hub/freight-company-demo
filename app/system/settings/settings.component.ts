@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { SettingsService } from 'src/app/settings.service';
-import { UtilityService } from 'src/app/utility.service';
+import { SettingsService } from 'src/app/services/settings.service';
+import { UtilityService } from 'src/app/services/utility.service';
 import { ItemFormControl } from 'src/app/models/item-form-control.system';
-import { options } from '../../data/options';
+import { options } from 'src/app/data/options';
 import { OptionsData } from 'src/app/models/options-data.system';
 import { SettingsListData } from 'src/app/models/settings-list-data.system';
 import { SettingsListIds } from 'src/app/models/settings-list-ids.system';
 import { settingsForm } from 'src/app/data/settings-form';
 import { FormItemSelectData } from 'src/app/models/form-item-select-data.system';
-import { FormItemCheckboxData } from 'src/app/models/form-item-checkbox-data.system';
 
 @Component({
   selector: 'app-settings',
@@ -18,9 +17,10 @@ import { FormItemCheckboxData } from 'src/app/models/form-item-checkbox-data.sys
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
-  staticData: any = settingsForm.static
+  staticData = settingsForm.static
+  groupLoads = settingsForm.groupLoads
+  groupLoadsFilter = settingsForm.groupLoadsFilter
   selectsData: Array<FormItemSelectData> = settingsForm.selects
-  checkboxesData: Array<FormItemCheckboxData> = settingsForm.checkboxes
   settings: SettingsListData
   options: OptionsData = UtilityService.uniqueCopy(options)
   form: FormGroup
@@ -39,8 +39,9 @@ export class SettingsComponent implements OnInit {
           unitsSystem: this.settings.unitsSystem.id,
           showLoadsFilter: this.settings.showLoadsFilter,
           keepFilterQuery: this.settings.keepFilterQuery,
+          keepFilterHistory: this.settings.keepFilterHistory,
           loadsNavButtons: this.settings.loadsNavButtons,
-          buttonsHotkeys: this.settings.buttonsHotkeys
+          loadsNavHotkeys: this.settings.loadsNavHotkeys
         })
         this.form.removeControl('validityControl')
       }

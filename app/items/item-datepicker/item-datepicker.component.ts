@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { FormItemDatepicker } from 'src/app/models/form-item-datepicker-data.system';
+import { FormItemDatepickerData } from 'src/app/models/form-item-datepicker-data.system';
 import { ItemFormControl } from 'src/app/models/item-form-control.system';
 
 @Component({
@@ -10,7 +10,7 @@ import { ItemFormControl } from 'src/app/models/item-form-control.system';
   styleUrls: ['./item-datepicker.component.scss']
 })
 export class ItemDatepickerComponent implements OnInit {
-  @Input() data: FormItemDatepicker
+  @Input() data: FormItemDatepickerData
 
   @Output() controlOutputEvent = new EventEmitter<ItemFormControl>()
 

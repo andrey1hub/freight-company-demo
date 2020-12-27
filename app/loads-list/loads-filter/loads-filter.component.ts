@@ -2,19 +2,20 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { auditTime } from 'rxjs/operators';
 
-import { UtilityService } from 'src/app/utility.service';
-import { loadsFilterData } from '../../data/loads-filter';
-import { FormItemInputTextData } from '../../models/form-item-input-text-data.system';
+import { UtilityService } from 'src/app/services/utility.service';
+import { loadsFilterData } from 'src/app/data/loads-filter';
+import { FormItemInputTextData } from 'src/app/models/form-item-input-text-data.system';
 import { FormItemSelectData } from 'src/app/models/form-item-select-data.system';
-import { FormItemDatepicker } from 'src/app/models/form-item-datepicker-data.system';
-import { options } from '../../data/options';
+import { FormItemDatepickerData } from 'src/app/models/form-item-datepicker-data.system';
+import { options } from 'src/app/data/options';
 import { OptionsData } from 'src/app/models/options-data.system';
 import { OptionItemData } from 'src/app/models/option-item-data.system';
 import { ItemFormControl } from 'src/app/models/item-form-control.system';
 import { FilterLoadsData } from 'src/app/models/filter-loads-data.system';
 import { FilterControls } from 'src/app/models/filter-controls.system';
 import { SettingsListData } from 'src/app/models/settings-list-data.system';
-import { SettingsService } from 'src/app/settings.service';
+import { SettingsService } from 'src/app/services/settings.service';
+import { LoadsFilterService } from 'src/app/services/loads-filter.service';
 
 @Component({
   selector: 'app-loads-filter',
@@ -27,12 +28,13 @@ export class LoadsFilterComponent implements OnInit {
   filterControls: FilterControls = loadsFilterData.filterControls
 
   idFieldData: FormItemInputTextData = loadsFilterData.id
-  formedFieldData: FormItemDatepicker = loadsFilterData.formed
+  formedFieldData: FormItemDatepickerData = loadsFilterData.formed
   selectFieldsData: Array<FormItemSelectData> = UtilityService.uniqueCopy(loadsFilterData.selects)
   selectOptions: OptionsData = this.getOptionsWithOptionAny(UtilityService.uniqueCopy(options))
 
   form: FormGroup
   filterData: FilterLoadsData
+  savedFilterData: FilterLoadsData
   settings: SettingsListData
   showFilter: boolean
 
@@ -42,14 +44,14 @@ export class LoadsFilterComponent implements OnInit {
     Object.keys(options).forEach(key => {
       let stack: Array<OptionItemData> = options[key]
 
-      stack.unshift({ id: UtilityService.FILTER_ANY_OPTION_ID, title: UtilityService.FILTER_ANY_OPTION_TITLE })
+      stack.unshift({ id: LoadsFilterService.FILTER_ANY_OPTION_ID, title: LoadsFilterService.FILTER_ANY_OPTION_TITLE })
       optionsData[key] = stack
     })
 
     return optionsData
   }
 
-  constructor(private settingsService: SettingsService) { }
+  constructor(private settingsService: SettingsService, private loadsFilterService: LoadsFilterService) { }
 
   ngOnInit(): void {
     let scope: LoadsFilterComponent = this
@@ -57,35 +59,33 @@ export class LoadsFilterComponent implements OnInit {
     this.settingsService.readSettings((settingsData: SettingsListData) => {
       this.settings = settingsData
       this.showFilter = this.settings.showLoadsFilter
+
+      if (this.settings.keepFilterQuery) {
+        this.savedFilterData = this.loadsFilterService.getLastFilterQuery()
+      }
+
+      this.form.setValue(this.savedFilterData ? this.savedFilterData : LoadsFilterService.FILTER_DEFAULT_VALUE, { emitEvent: !!this.savedFilterData })
     })
     this.form = new FormGroup({})
 
-    setTimeout(() => {
-      this.setDefaultValue()
-    }, 0)
-
-    this.form.valueChanges.pipe(auditTime(UtilityService.FILTER_AUDIT_TIME)).subscribe({
+    this.form.valueChanges.pipe(auditTime(LoadsFilterService.FILTER_AUDIT_TIME)).subscribe({
       next(data: FilterLoadsData) {
-        let validFilter: boolean = Object.keys(data).every(key => scope.form.controls[key].valid)
+        let keys: Array<string> = Object.keys(data)
+        let validFilter: boolean = [
+          keys.every(key => scope.form.controls[key].valid),
+          keys.some(key => !!data[key])
+        ].every(item => item)
+
         if (
           validFilter &&
+          scope.showFilter &&
           (!scope.filterData || JSON.stringify(data) !== JSON.stringify(scope.filterData))
         ) {
           scope.filterData = data
           scope.filterEvent.emit(data)
+          if (scope.settings.keepFilterQuery) scope.loadsFilterService.saveFilterQuery(data)
         }
       }
-    })
-  }
-  setDefaultValue(): void {
-    this.form.setValue({
-      id: '',
-      formedAfter: '',
-      formedBefore: '',
-      fromDepartment: UtilityService.FILTER_ANY_OPTION_ID,
-      toDepartment: UtilityService.FILTER_ANY_OPTION_ID,
-      service: UtilityService.FILTER_ANY_OPTION_ID,
-      packaging: UtilityService.FILTER_ANY_OPTION_ID
     })
   }
   addFormControl(control: ItemFormControl) {
@@ -93,9 +93,10 @@ export class LoadsFilterComponent implements OnInit {
   }
   onShowToggle(): void {
     this.showFilter = !this.showFilter
+    if (this.showFilter) this.form.setValue(this.filterData ? this.filterData : this.savedFilterData ? this.savedFilterData : LoadsFilterService.FILTER_DEFAULT_VALUE)
   }
   onClearFilter(): void {
-    this.setDefaultValue()
+    this.form.setValue(LoadsFilterService.FILTER_DEFAULT_VALUE)
   }
 
 }

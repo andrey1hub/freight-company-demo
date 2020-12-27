@@ -43,6 +43,17 @@ body {
 }
 label {
   margin-bottom: 0;
+  line-height: 1;
+}
+fieldset {
+  padding: 0 1rem 1rem;
+}
+legend {
+  display: inline-block;
+  width: auto;
+  max-width: none;
+  padding: 0 .5rem;
+  font-size: inherit;
 }
 .app-row {
   margin-right: -15px;

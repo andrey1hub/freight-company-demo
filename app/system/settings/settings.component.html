@@ -5,9 +5,15 @@
     <div class="row">
       <app-item-select *ngFor="let item of selectsData" class="{{ item.classes }}" [data]="item" [stack]="options[item.stackId]" (controlOutputEvent)="addFormControl($event)"></app-item-select>
     </div>
-    <div class="row">
-      <app-item-checkbox *ngFor="let item of checkboxesData" class="{{ item.classes }}" [data]="item" (controlOutputEvent)="addFormControl($event)"></app-item-checkbox>
-    </div>
+    <fieldset class="row border border-secondary rounded-lg mb-3">
+      <legend>{{ groupLoads.label }}</legend>
+      <app-item-checkbox *ngFor="let item of groupLoads.checkboxes" class="{{ item.classes }}" [data]="item" (controlOutputEvent)="addFormControl($event)"></app-item-checkbox>
+    </fieldset>
+    <fieldset class="row border border-secondary rounded-lg mb-3">
+      <legend>{{ groupLoadsFilter.label }}</legend>
+      <app-item-checkbox *ngFor="let item of groupLoadsFilter.checkboxes" class="{{ item.classes }}" [data]="item" (controlOutputEvent)="addFormControl($event)"></app-item-checkbox>
+      <app-item-range class="{{ groupLoadsFilter.historySizePicker.classes }}" [data]="groupLoadsFilter.historySizePicker"></app-item-range>
+    </fieldset>
     <div class="w-50 pt-3 mx-auto">
       <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">{{ staticData.bttnSubmit }}</button>
     </div>

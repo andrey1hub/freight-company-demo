@@ -1,7 +1,7 @@
-export interface FormItemDatepicker {
+import { FormItemData } from './form-item-data.system';
+
+export interface FormItemDatepickerData extends FormItemData {
   foldable: boolean
-  classes: string
-  label: string
   propertyStart: string
   propertyEnd: string
   labelClasses: string

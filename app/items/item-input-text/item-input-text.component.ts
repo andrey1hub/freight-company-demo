@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, ValidatorFn, Validators } from '@angular/forms';
 
-import { ItemFormControl } from '../../models/item-form-control.system';
+import { ItemFormControl } from 'src/app/models/item-form-control.system';
 import { FormItemInputTextData } from 'src/app/models/form-item-input-text-data.system';
 
 @Component({

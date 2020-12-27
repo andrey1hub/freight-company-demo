@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { UtilityService } from 'src/app/utility.service';
+import { UtilityService } from 'src/app/services/utility.service';
 import { systemMenu } from 'src/app/data/system-menu';
-import { MenuBundle } from '../models/menu-bundle.system';
-import { appData } from '../data/app';
+import { MenuBundle } from 'src/app/models/menu-bundle.system';
+import { appData } from 'src/app/data/app';
 
 @Component({
   selector: 'app-system',

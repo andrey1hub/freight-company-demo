@@ -19,9 +19,12 @@ export const loadsFilterData = {
     placeHolder: 'Filter by ID, case insensitive'
   },
   formed: {
+    disabled: false,
+    required: false,
     foldable: true,
     classes: 'col-md-6',
     label: 'Formed',
+    property: 'formedAfter,formedBefore',
     propertyStart: 'formedAfter',
     propertyEnd: 'formedBefore',
     labelClasses: 'col-4 col-md-12 px-0 pt-2 d-md-none',

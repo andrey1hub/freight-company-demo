@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
@@ -24,6 +25,8 @@ import { SettingsComponent } from './system/settings/settings.component';
 import { LoadsGeneratorComponent } from './system/loads-generator/loads-generator.component';
 import { ItemCheckboxComponent } from './items/item-checkbox/item-checkbox.component';
 import { ExportImportDbComponent } from './system/export-import-db/export-import-db.component';
+import { ConfirmDialogComponent } from './mat/confirm-dialog/confirm-dialog.component';
+import { ItemRangeComponent } from './items/item-range/item-range.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +47,9 @@ import { ExportImportDbComponent } from './system/export-import-db/export-import
     SettingsComponent,
     LoadsGeneratorComponent,
     ItemCheckboxComponent,
-    ExportImportDbComponent
+    ExportImportDbComponent,
+    ConfirmDialogComponent,
+    ItemRangeComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +57,8 @@ import { ExportImportDbComponent } from './system/export-import-db/export-import
     ReactiveFormsModule,
     NoopAnimationsModule,
     MatNativeDateModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatDialogModule
   ],
   providers: [Title],
   bootstrap: [AppComponent]

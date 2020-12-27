@@ -11,7 +11,11 @@ export const appData: any = {
     dimesions: 'Dimesions:',
     weight: 'Weight:',
     bttnEdit: 'Edit',
-    bttnDelete: 'Delete'
+    bttnDelete: 'Delete',
+    confirmHeader: 'Confirm delete of load',
+    confirmText: 'Are you sure you want to delete this load?',
+    confirmCancel: 'Cancel',
+    confirmDelete: 'Delete'
   },
   loadsList: {
     header: 'Loads',

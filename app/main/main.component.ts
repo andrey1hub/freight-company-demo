@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 
-import { LoadService } from '../load.service';
-import { SettingsService } from '../settings.service';
-import { UtilityService } from 'src/app/utility.service';
-import { MainData } from '../models/main-data.system';
-import { mainItemsData } from '../data/main-items';
-import { MainItemTextData } from '../models/main-item-text-data.system';
-import { MainItemSelectableData } from '../models/main-item-selectable-data.system';
-import { options } from '../data/options';
-import { LoadsSummary } from '../models/loads-summary.public';
-import { SettingsListData } from '../models/settings-list-data.system';
+import { LoadService } from 'src/app/services/load.service';
+import { SettingsService } from 'src/app/services/settings.service';
+import { UtilityService } from 'src/app/services/utility.service';
+import { MainData } from 'src/app/models/main-data.system';
+import { mainItemsData } from 'src/app/data/main-items';
+import { MainItemTextData } from 'src/app/models/main-item-text-data.system';
+import { MainItemSelectableData } from 'src/app/models/main-item-selectable-data.system';
+import { options } from 'src/app/data/options';
+import { LoadsSummary } from 'src/app/models/loads-summary.public';
+import { SettingsListData } from 'src/app/models/settings-list-data.system';
 
 @Component({
   selector: 'app-main',

@@ -1,0 +1,8 @@
+<div class="row{{ data.rowClasses ? ' ' + data.rowClasses : '' }}">
+  <div class="{{ data.labelClasses }}">
+    <label class="text-muted" for="input-{{ data.property }}">{{ data.label }}:</label>
+  </div>
+  <div class="{{ data.inputClasses }}">
+    <input type="text" class="form-control text-center" id="input-{{ data.property }}" [disabled]="data.disabled">
+  </div>
+</div>

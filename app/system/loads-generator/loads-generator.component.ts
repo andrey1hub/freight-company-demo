@@ -3,9 +3,9 @@ import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { loadsgenForm } from 'src/app/data/loadsgen-form';
-import { LoadService } from 'src/app/load.service';
-import { CommandService } from 'src/app/command.service';
-import { FormItemDatepicker } from 'src/app/models/form-item-datepicker-data.system';
+import { LoadService } from 'src/app/services/load.service';
+import { CommandService } from 'src/app/services/command.service';
+import { FormItemDatepickerData } from 'src/app/models/form-item-datepicker-data.system';
 import { FormItemInputTextData } from 'src/app/models/form-item-input-text-data.system';
 import { ItemFormControl } from 'src/app/models/item-form-control.system';
 
@@ -16,7 +16,7 @@ import { ItemFormControl } from 'src/app/models/item-form-control.system';
 })
 export class LoadsGeneratorComponent implements OnInit {
   staticData: any = loadsgenForm.static
-  formedSpan: FormItemDatepicker = loadsgenForm.formedSpan
+  formedSpan: FormItemDatepickerData = loadsgenForm.formedSpan
   inputsData: Array<FormItemInputTextData> = loadsgenForm.inputs
   form: FormGroup
 

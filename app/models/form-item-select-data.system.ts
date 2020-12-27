@@ -1,10 +1,7 @@
-export interface FormItemSelectData {
-  disabled: boolean
-  required: boolean
-  classes: string
+import { FormItemData } from './form-item-data.system';
+
+export interface FormItemSelectData extends FormItemData {
   rowClasses: string
-  label: string
-  property: string
   labelClasses: string
   inputClasses: string
   stackId: string
