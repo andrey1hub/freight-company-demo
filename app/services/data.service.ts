@@ -8,6 +8,7 @@ import { SettingEntryData } from 'src/app/models/setting-entry-data.public';
 import { Command } from 'src/app/models/command.public';
 import { LoadsSummary } from 'src/app/models/loads-summary.public';
 import { Data } from 'src/app/models/data.public';
+import { LoadEntryFullData } from '../models/load-entry-full-data.public';
 
 @Injectable({
   providedIn: 'root'
@@ -38,18 +39,18 @@ export class DataService {
     ))
   }
 
-  createRequest(type: string, data: EntryData): Observable<string> {
+  createRequest(type: string, entity: string, data: LoadEntryData | Array<SettingEntryData>): Observable<string | Array<string>> {
     return new Observable(subscriber => this.mockBackendService.mockRequest(
       subscriber,
       {
         action: DataService.DATA_ACTION_CREATE,
-        entity: DataService.ENTITY_ENTRY,
+        entity,
         type,
         data
       }
     ))
   }
-  readRequest(type: string, entity: string, data: { id: string } | null): Observable<Data<Array<EntryData> | EntryData | LoadsSummary>> {
+  readRequest(type: string, entity: string, data: EntryData | null): Observable<Data<LoadEntryFullData | Array<EntryData> | LoadsSummary>> {
     return new Observable(subscriber => this.mockBackendService.mockRequest(
       subscriber,
       {
@@ -60,7 +61,7 @@ export class DataService {
       }
     ))
   }
-  updateRequest(type: string, entity: string, data: LoadEntryData | Array<SettingEntryData>): Observable<Array<string>> {
+  updateRequest(type: string, entity: string, data: LoadEntryData | Array<SettingEntryData>): Observable<string | Array<string>> {
     return new Observable(subscriber => this.mockBackendService.mockRequest(
       subscriber,
       {
@@ -71,7 +72,7 @@ export class DataService {
       }
     ))
   }
-  deleteRequest(type: string, data: { id: string }): Observable<boolean> {
+  deleteRequest(type: string, data: EntryData): Observable<boolean> {
     return new Observable(subscriber => this.mockBackendService.mockRequest(
       subscriber,
       {

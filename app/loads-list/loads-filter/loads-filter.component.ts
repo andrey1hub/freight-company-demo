@@ -25,10 +25,10 @@ import { LoadsFilterService } from 'src/app/services/loads-filter.service';
 export class LoadsFilterComponent implements OnInit {
   @Output() filterEvent = new EventEmitter<FilterLoadsData>()
 
-  filterControls: FilterControls = loadsFilterData.filterControls
+  filterControls: FilterControls = UtilityService.uniqueCopy(loadsFilterData.filterControls)
 
-  idFieldData: FormItemInputTextData = loadsFilterData.id
-  formedFieldData: FormItemDatepickerData = loadsFilterData.formed
+  idFieldData: FormItemInputTextData = UtilityService.uniqueCopy(loadsFilterData.id)
+  formedFieldData: FormItemDatepickerData = UtilityService.uniqueCopy(loadsFilterData.formed)
   selectFieldsData: Array<FormItemSelectData> = UtilityService.uniqueCopy(loadsFilterData.selects)
   selectOptions: OptionsData = this.getOptionsWithOptionAny(UtilityService.uniqueCopy(options))
 

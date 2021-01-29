@@ -1,6 +1,6 @@
 import { AbstractRequest } from './abstract-request';
 import { DatabaseService } from './database.service';
-import { BackendDBEntryData, BackendDBLoadEntryData, BackendRequest, BackendSortHandlers } from './models';
+import { BackendDBEntryData, BackendDBLoadEntryData, BackendDBSettingsEntryData, BackendRequest, BackendSortHandlers } from './models';
 
 export class CreateRequest extends AbstractRequest {
 
@@ -8,9 +8,10 @@ export class CreateRequest extends AbstractRequest {
     super()
   }
 
-  getProcessorName(requestData: BackendRequest<BackendDBEntryData>): string {
+  getProcessorName(requestData: BackendRequest<BackendDBLoadEntryData | Array<BackendDBSettingsEntryData>>): string {
     let type: string = requestData.type
-    return type && 'create' + type[0].toLocaleUpperCase() + type.substr(1) + 'Row' || null
+    let entity: string = requestData.entity
+    return type && entity && 'create' + type[0].toLocaleUpperCase() + type.substr(1) + entity[0].toLocaleUpperCase() + entity.substr(1) || null
   }
 
   createRow(requestData: BackendRequest<BackendDBEntryData>, dbIdPrefix?: string, sortType?: string): string {
@@ -37,18 +38,20 @@ export class CreateRequest extends AbstractRequest {
 
     return id
   }
-  createRowsList(type: string, parsed: Array<BackendDBEntryData>, dbIdPrefix?: string, sortType?: string): Array<BackendDBEntryData> {
+  createRowsList(type: string, parsed: Array<BackendDBEntryData>, dbIdPrefix?: string, sortType?: string): Array<string> {
     return AbstractRequest.unique(parsed).map((data: BackendDBEntryData) => {
-      data.id = this.createRow({
+      return this.createRow({
         action: 'create',
         type,
         entity: 'entry',
         data
       }, dbIdPrefix, sortType)
-      return data
     })
   }
-  createLoadRow(requestData: BackendRequest<BackendDBLoadEntryData>): string {
+  createSettingsCollection(requestData: BackendRequest<Array<BackendDBSettingsEntryData>>): Array<string> {
+    return this.createRowsList(requestData.type, requestData.data)
+  }
+  createLoadEntry(requestData: BackendRequest<BackendDBLoadEntryData>): string {
     requestData.data.formed = '' + (new Date()).getTime()
     requestData.data.status = '1'
     return this.createRow(requestData)

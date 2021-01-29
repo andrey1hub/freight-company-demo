@@ -84,7 +84,7 @@ export const editLoadFormData = {
       isRow: false,
       labelClasses: '',
       inputClasses: '',
-      placeHolder: 'n...n.n, cm'
+      placeHolder: 'n...n.n, %units%;;;length'
     },
     {
       classes: 'col-sm-2 mb-sm-3',
@@ -98,7 +98,7 @@ export const editLoadFormData = {
       isRow: false,
       labelClasses: '',
       inputClasses: '',
-      placeHolder: 'n...n.n, cm'
+      placeHolder: 'n...n.n, %units%;;;length'
     },
     {
       classes: 'col-sm-2 mb-sm-3',
@@ -112,7 +112,7 @@ export const editLoadFormData = {
       isRow: false,
       labelClasses: '',
       inputClasses: '',
-      placeHolder: 'n...n.n, cm'
+      placeHolder: 'n...n.n, %units%;;;length'
     },
     {
       classes: 'col-sm-3 mb-sm-3',
@@ -126,7 +126,7 @@ export const editLoadFormData = {
       isRow: false,
       labelClasses: '',
       inputClasses: '',
-      placeHolder: 'n...n.n, kg'
+      placeHolder: 'n...n.n, %units%;;;weight'
     },
     {
       classes: 'col-sm-3 mb-sm-3',

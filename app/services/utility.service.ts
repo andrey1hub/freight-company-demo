@@ -7,9 +7,6 @@ import { MenuBundle } from 'src/app/models/menu-bundle.system';
   providedIn: 'root'
 })
 export class UtilityService {
-  static APP_NAME: string = 'Freight Company Demo'
-  static APP_VERSION: string = 'v1.7.0'
-
   static uniqueCopy(data: any): any {
     return data && JSON.parse(JSON.stringify(data))
   }
@@ -35,6 +32,22 @@ export class UtilityService {
     })
 
     return menuBundle
+  }
+  static parseStringWithParams(string: string, handler: Function): string {
+    let result: string
+    let parsed: Array<string> = string.split(';;;')
+    let values: any
+
+    if (parsed?.length === 2 && handler && typeof handler === 'function') {
+      result = parsed[0]
+      values = handler(parsed[1].split(','))
+      Object.keys(values).forEach(key => {
+        result = result.split('%' + key + '%').join(values[key])
+      })
+    } else {
+      result = string
+    }
+    return result
   }
 
   constructor() { }

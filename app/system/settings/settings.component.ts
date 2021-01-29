@@ -10,6 +10,7 @@ import { SettingsListData } from 'src/app/models/settings-list-data.system';
 import { SettingsListIds } from 'src/app/models/settings-list-ids.system';
 import { settingsForm } from 'src/app/data/settings-form';
 import { FormItemSelectData } from 'src/app/models/form-item-select-data.system';
+import { SettingEntryData } from 'src/app/models/setting-entry-data.public';
 
 @Component({
   selector: 'app-settings',
@@ -18,13 +19,14 @@ import { FormItemSelectData } from 'src/app/models/form-item-select-data.system'
 })
 export class SettingsComponent implements OnInit {
   staticData = settingsForm.static
-  groupLoads = settingsForm.groupLoads
-  groupLoadsFilter = settingsForm.groupLoadsFilter
-  selectsData: Array<FormItemSelectData> = settingsForm.selects
+  groupLoads = UtilityService.uniqueCopy(settingsForm.groupLoads)
+  groupLoadsFilter = UtilityService.uniqueCopy(settingsForm.groupLoadsFilter)
+  selectsData: Array<FormItemSelectData> = UtilityService.uniqueCopy(settingsForm.selects)
   settings: SettingsListData
   options: OptionsData = UtilityService.uniqueCopy(options)
   form: FormGroup
-  showSuccessMessage: boolean = false
+  showSuccessSavedMsg: boolean
+  showSuccessSetupMsg: boolean
 
   constructor(private settingsService: SettingsService) { }
 
@@ -44,6 +46,11 @@ export class SettingsComponent implements OnInit {
           loadsNavHotkeys: this.settings.loadsNavHotkeys
         })
         this.form.removeControl('validityControl')
+
+        if (!this.settings.firstRunOfApp) {
+          this.form.controls.currentDepartment.disable()
+          this.form.controls.unitsSystem.disable()
+        }
       }
     )
 
@@ -57,11 +64,33 @@ export class SettingsComponent implements OnInit {
   onFormSubmit() {
     let raw: SettingsListIds = this.form.getRawValue()
 
-    this.showSuccessMessage = false
-    this.settingsService.updateSettings(
-      (response: Array<string>) => { if (response && response.length) this.showSuccessMessage = true },
-      raw
-    )
+    this.showSuccessSavedMsg = false
+    this.showSuccessSetupMsg = false
+
+    if (this.settings.firstRunOfApp) {
+      this.settingsService.createSettings(
+        (response: SettingsListData) => {
+          this.showSuccessSetupMsg = true
+          this.settings = response
+
+          if (!this.settings.firstRunOfApp) {
+            this.form.controls.currentDepartment.disable()
+            this.form.controls.unitsSystem.disable()
+          }
+        },
+        {
+          stack: this.settings.firstRunOfApp as Array<SettingEntryData>,
+          values: raw
+        }
+      )
+    } else {
+      this.settingsService.updateSettings(
+        () => {
+          this.showSuccessSavedMsg = true
+        },
+        raw
+      )
+    }
   }
 
 }

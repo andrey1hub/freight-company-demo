@@ -56,13 +56,13 @@
         <div class="col-md-6 mb-2">
           <div class="row">
             <div class="col-4 px-0 pr-sm-2 font-weight-bolder">{{ staticData.dimesions }}</div>
-            <div class="col-8 px-0">{{ load.length }} x {{ load.width }} x {{ load.height }}</div>
+            <div class="col-8 px-0">{{ load.length }} x {{ load.width }} x {{ load.height }}{{ settings && ' ' + units[settings.unitsSystem.id]['length'] }}</div>
           </div>
         </div>
         <div class="col-md-6 mb-2">
           <div class="row">
             <div class="col-4 px-0 pr-sm-2 font-weight-bolder">{{ staticData.weight }}</div>
-            <div class="col-8 px-0">{{ load.weight }}</div>
+            <div class="col-8 px-0">{{ load.weight }}{{ settings && ' ' + units[settings.unitsSystem.id]['weight'] }}</div>
           </div>
         </div>
       </div>

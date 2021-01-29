@@ -13,7 +13,7 @@ export const initialSettings: Array<BackendDBSettingsEntryData> = [
     property: 'unitsSystem',
     modifier: 'select',
     stackId: 'unitsSystems',
-    value: 'mkg'
+    value: 'cmkg'
   },
   {
     id: '',

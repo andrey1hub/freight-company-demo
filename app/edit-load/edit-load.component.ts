@@ -14,6 +14,8 @@ import { OptionsData } from 'src/app/models/options-data.system';
 import { LoadEntryData } from 'src/app/models/load-entry-data.public';
 import { SettingsListData } from 'src/app/models/settings-list-data.system';
 import { LoadEntryFullData } from 'src/app/models/load-entry-full-data.public';
+import { appData } from 'src/app/data/app';
+import { UnitsSystems } from 'src/app/models/units.system';
 
 @Component({
   selector: 'app-edit-load',
@@ -26,10 +28,11 @@ export class EditLoadComponent implements OnInit {
   options: OptionsData = UtilityService.uniqueCopy(options)
   form: FormGroup
   departmentsSync: Array<FormControl> = []
-  staticData: any = UtilityService.uniqueCopy(editLoadFormData.static)
+  staticData = editLoadFormData.static
   statusControlData: FormItemSelectData = UtilityService.uniqueCopy(editLoadFormData.status)
   selectControlsData: Array<Array<FormItemSelectData>> = UtilityService.uniqueCopy(editLoadFormData.selects)
   inputControlsData: Array<FormItemInputTextData> = UtilityService.uniqueCopy(editLoadFormData.inputs)
+  units: UnitsSystems = UtilityService.uniqueCopy(appData.units)
   showErrorMessage: boolean = false
 
   constructor(
@@ -59,6 +62,16 @@ export class EditLoadComponent implements OnInit {
           })
           this.form.removeControl('validityControl')
         }
+
+        this.inputControlsData = this.inputControlsData.map(item => {
+          item.placeHolder = UtilityService.parseStringWithParams(
+            item.placeHolder,
+            (params: Array<string>) => ({
+              units: this.units[this.settings.unitsSystem.id][params[0]]
+            })
+          )
+          return item
+        })
       }
     )
 
@@ -121,7 +134,7 @@ export class EditLoadComponent implements OnInit {
     let raw: LoadEntryData = this.form.getRawValue()
 
     this.loadService.createLoad(
-      (loadId: string) => { this.router.navigate(['loads', loadId]) },
+      (loadId: string) => this.router.navigate(['loads', loadId]),
       raw
     )
   }
@@ -184,7 +197,7 @@ export class EditLoadComponent implements OnInit {
     raw.id = this.loadId
 
     this.loadService.updateLoad(
-      (response: Array<string>) => { if (response && response.length) this.router.navigate(['loads', response[0]]) },
+      (loadId: string) => this.router.navigate(['loads', loadId]),
       raw
     )
   }

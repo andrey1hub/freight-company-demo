@@ -8,7 +8,7 @@ export const systemMenu = [
     link: '/system/loadsgen'
   },
   {
-    label: 'Export/Import DB',
+    label: 'Management DB',
     link: '/system/db'
   }
 ]

@@ -21,7 +21,7 @@ export class LoadService extends AbstractStorageService {
 
   createLoad(handler: Function, data: LoadEntryData): void {
     this.processRequest(
-      this.dataService.createRequest(LoadService.SERVICE_DATA_TYPE, data),
+      this.dataService.createRequest(LoadService.SERVICE_DATA_TYPE, DataService.ENTITY_ENTRY, data),
       handler
     )
   }

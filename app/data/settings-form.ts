@@ -1,8 +1,11 @@
 export const settingsForm = {
   static: {
     header: 'Settings:',
-    successMessage: 'Settings are saved',
-    bttnSubmit: 'Save'
+    successSavedMsg: 'Settings are saved',
+    successSetupMsg: 'Settings have been set up',
+    firstRunMsg: ['Please, set up your department and units system to start using this software!', 'You will not be able to change your choice until you reset database.'],
+    bttnSet: 'Set',
+    bttnSave: 'Save'
   },
   groupLoads: {
     label: 'Loads',
@@ -79,7 +82,7 @@ export const settingsForm = {
       stackId: 'departments'
     },
     {
-      disabled: true,
+      disabled: false,
       required: false,
       classes: 'col-sm-6 mb-3',
       rowClasses: 'ml-sm-0 ml-md-n3',

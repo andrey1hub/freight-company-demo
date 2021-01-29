@@ -1,5 +1,5 @@
 <h6 class="border-bottom border-danger bg-danger text-white mx-n4 mt-n4 mb-4 py-2 px-4">{{ data.header }}</h6>
-<p>{{ data.text }}</p>
+<p *ngFor="let part of data.text">{{ part }}</p>
 <div class="container pt-4">
   <div class="row">
     <div class="col-6 col-md-5">

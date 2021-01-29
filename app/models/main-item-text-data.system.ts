@@ -2,7 +2,7 @@ export interface MainItemTextData {
   classes: string
   label: string
   supSign: string
-  units: string
+  unitsType: string
   valueId: string
   hasTitle: boolean
 }

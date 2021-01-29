@@ -10,6 +10,8 @@ import { MainItemSelectableData } from 'src/app/models/main-item-selectable-data
 import { options } from 'src/app/data/options';
 import { LoadsSummary } from 'src/app/models/loads-summary.public';
 import { SettingsListData } from 'src/app/models/settings-list-data.system';
+import { OptionsData } from 'src/app/models/options-data.system';
+import { appData } from 'src/app/data/app';
 
 @Component({
   selector: 'app-main',
@@ -18,27 +20,26 @@ import { SettingsListData } from 'src/app/models/settings-list-data.system';
 })
 export class MainComponent implements OnInit {
   mainData: MainData
-  staticData: any = UtilityService.uniqueCopy(mainItemsData.static)
+  unitsData = UtilityService.uniqueCopy(appData.units)
+  staticData = mainItemsData.static
   mainTextItemsData: Array<Array<MainItemTextData>> = UtilityService.uniqueCopy(mainItemsData.text)
   mainSelectableItemsData: Array<MainItemSelectableData> = UtilityService.uniqueCopy(mainItemsData.selectable)
-  appName: string = UtilityService.APP_NAME
-  appVersion: string = UtilityService.APP_VERSION
+  optionsData: OptionsData = UtilityService.uniqueCopy(options)
 
   constructor(private settingsService: SettingsService, private loadService: LoadService) { }
 
   ngOnInit(): void {
     this.settingsService.readSettings(
       (settingsData: SettingsListData) => {
-        this.mainData = { ...this.mainData, ...UtilityService.uniqueCopy(options), ...settingsData }
+        this.mainData = { ...this.mainData, ...this.optionsData, ...settingsData }
       }
     )
 
-    this.getLoadsSummary()
-  }
-  getLoadsSummary() {
     this.loadService.readLoadsSummary((summaryData: LoadsSummary) => {
-      // Convert cm3 => m3
-      summaryData.totalVolume = summaryData.totalVolume / 1000000
+      if (this.mainData?.unitsSystem.id === 'cmkg') {
+        // Convert cm3 => m3
+        summaryData.totalVolume = summaryData.totalVolume / 1000000
+      }
       this.mainData = { ...this.mainData, ...summaryData }
     })
   }

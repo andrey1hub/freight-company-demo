@@ -14,6 +14,7 @@ export class CommandService extends AbstractStorageService {
   static COMMAND_GENERATE: string = 'generate'
   static COMMAND_DUMP: string = 'dump'
   static COMMAND_RESTORE: string = 'restore'
+  static COMMAND_RESET: string = 'reset'
 
   constructor(private dataService: DataService) {
     super()

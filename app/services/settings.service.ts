@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { DataService } from './data.service';
 import { AbstractStorageService } from './abstract-storage.service';
@@ -9,6 +10,7 @@ import { options } from 'src/app/data/options';
 import { OptionItemData } from 'src/app/models/option-item-data.system';
 import { SettingsListData } from 'src/app/models/settings-list-data.system';
 import { Data } from 'src/app/models/data.public';
+import { SettingsRawData } from 'src/app/models/settings-raw-data.system';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +21,7 @@ export class SettingsService extends AbstractStorageService {
   private convertDbEntriesToSettings(data: Array<SettingEntryData>): SettingsListData {
     let settingsListData: any = {}
 
+    data = UtilityService.uniqueCopy(data)
     data.forEach(setting => {
       let settingData: OptionItemData | boolean | string | number
 
@@ -50,11 +53,41 @@ export class SettingsService extends AbstractStorageService {
 
     return settingsListData
   }
+  private convertSettingsToDbEntries(values: SettingsListIds, stack: Array<SettingEntryData>): Array<SettingEntryData> {
+    let collection: Array<SettingEntryData> = []
 
-  constructor(private dataService: DataService) {
+    stack = UtilityService.uniqueCopy(stack)
+    Object.keys(values).forEach(key => {
+      let setting: SettingEntryData = stack.find(item => item.property === key)
+
+      if (setting.modifier === 'checkbox') {
+        setting.value = values[key] ? '1' : '0'
+      } else {
+        setting.value = values[key]
+      }
+      collection.push(setting)
+    })
+    return collection
+  }
+
+  constructor(private router: Router, private dataService: DataService) {
     super()
   }
 
+  createSettings(handler: Function, data: SettingsRawData): void {
+    let collection: Array<SettingEntryData> = this.convertSettingsToDbEntries(data.values, data.stack)
+
+    this.processRequest(
+      this.dataService.createRequest(SettingsService.SERVICE_DATA_TYPE, DataService.ENTITY_COLLECTION, collection),
+      (ids: Array<string>) => {
+        ids.forEach((id, index) => {
+          collection[index].id = id
+        })
+        this.setStorage(collection)
+        handler(this.convertDbEntriesToSettings(collection))
+      }
+    )
+  }
   readSettings(handler: Function): void {
     let storage: Array<SettingEntryData> = this.getStorage()
     if (storage) {
@@ -63,34 +96,33 @@ export class SettingsService extends AbstractStorageService {
       this.processRequest(
         this.dataService.readRequest(SettingsService.SERVICE_DATA_TYPE, DataService.ENTITY_COLLECTION, null),
         (response: Data<Array<SettingEntryData>>) => {
-          this.setStorage(response.data)
-          handler(this.convertDbEntriesToSettings(response.data))
+          let settingsData: SettingsListData = this.convertDbEntriesToSettings(response.data)
+
+          if (settingsData.firstRunOfApp) {
+            this.router.navigate(['system'])
+            settingsData.firstRunOfApp = UtilityService.uniqueCopy(response.data)
+          } else {
+            this.setStorage(response.data)
+          }
+          handler(settingsData)
         }
       )
     }
   }
   updateSettings(handler: Function, data: SettingsListIds): void {
-    let storage: Array<SettingEntryData> = this.getStorage()
-
-    Object.keys(data).forEach(key => {
-      storage.find(entry => {
-        if (entry.property === key) {
-          if (entry.modifier === 'checkbox') {
-            entry.value = data[key] ? '1' : '0'
-          } else {
-            entry.value = data[key]
-          }
-          return true
-        }
-      })
-    })
+    let collection: Array<SettingEntryData> = this.convertSettingsToDbEntries(data, this.getStorage())
 
     this.processRequest(
-      this.dataService.updateRequest(SettingsService.SERVICE_DATA_TYPE, DataService.ENTITY_COLLECTION, storage),
+      this.dataService.updateRequest(SettingsService.SERVICE_DATA_TYPE, DataService.ENTITY_COLLECTION, collection),
       (response: Array<string>) => {
-        if (response && response.length) this.setStorage(storage)
+        this.setStorage(collection)
         handler(response)
       }
     )
+  }
+
+  clearSettings(): void {
+    this.setStorage(undefined)
+    this.router.navigate(['system'])
   }
 }

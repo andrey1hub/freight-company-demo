@@ -1,6 +1,5 @@
 export const mainItemsData = {
   static: {
-    firstRunText: ['First run of ', 'This software uses local storage as a database. Consider this if you are going to use ', ' for managing big amount of data.', 'It does not have backend and server, all computing goes in your browser.'],
     header: 'Database summary'
   },
   text: [
@@ -9,7 +8,7 @@ export const mainItemsData = {
         classes: 'col-sm-6',
         label: 'Department',
         supSign: '',
-        units: '',
+        unitsType: '',
         valueId: 'currentDepartment',
         hasTitle: true
       },
@@ -17,7 +16,7 @@ export const mainItemsData = {
         classes: 'col-sm-6',
         label: 'Loads count',
         supSign: '',
-        units: '',
+        unitsType: '',
         valueId: 'totalInStorage',
         hasTitle: false
       }
@@ -27,7 +26,7 @@ export const mainItemsData = {
         classes: 'col-sm-6 mb-sm-2',
         label: 'Loads weight',
         supSign: '',
-        units: 'kg',
+        unitsType: 'weight',
         valueId: 'totalWeight',
         hasTitle: false
       },
@@ -35,7 +34,7 @@ export const mainItemsData = {
         classes: 'col-sm-6 mb-1 mb-sm-2',
         label: 'Loads volume',
         supSign: '3',
-        units: 'm',
+        unitsType: 'volume',
         valueId: 'totalVolume',
         hasTitle: false
       }

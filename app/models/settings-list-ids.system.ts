@@ -1,8 +1,9 @@
 export interface SettingsListIds {
   currentDepartment: string
   unitsSystem: string
-  buttonsHotkeys: boolean
+  loadsNavHotkeys: boolean
   keepFilterQuery: boolean
+  keepFilterHistory: boolean
   loadsNavButtons: boolean
   showLoadsFilter: boolean
 }

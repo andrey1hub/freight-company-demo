@@ -1,6 +1,6 @@
 import { AbstractRequest } from './abstract-request';
 import { DatabaseService } from './database.service';
-import { BackendDBEntryData, BackendRequest } from './models';
+import { BackendDBEntryData, BackendDBLoadEntryData, BackendDBSettingsEntryData, BackendRequest } from './models';
 
 export class UpdateRequest extends AbstractRequest {
 
@@ -8,9 +8,10 @@ export class UpdateRequest extends AbstractRequest {
     super()
   }
 
-  getProcessorName(requestData: BackendRequest<BackendDBEntryData | Array<BackendDBEntryData>>): string {
+  getProcessorName(requestData: BackendRequest<BackendDBLoadEntryData | Array<BackendDBSettingsEntryData>>): string {
+    let type: string = requestData.type
     let entity: string = requestData.entity
-    return entity && 'update' + entity[0].toLocaleUpperCase() + entity.substr(1) || null
+    return type && entity && 'update' + type[0].toLocaleUpperCase() + type.substr(1) + entity[0].toLocaleUpperCase() + entity.substr(1) || null
   }
 
   updateRow(requestData: BackendRequest<BackendDBEntryData>): string {
@@ -31,11 +32,11 @@ export class UpdateRequest extends AbstractRequest {
       data
     }))
   }
-  updateCollection(requestData: BackendRequest<Array<BackendDBEntryData>>): Array<string> {
-    return this.updateRowsList(requestData.type, requestData.data)
+  updateSettingsCollection(requestData: BackendRequest<Array<BackendDBSettingsEntryData>>): Array<string> {
+    return this.updateRowsList(requestData.type, requestData.data.filter(item => item.property !== 'currentDepartment' && item.property !== 'unitsSystem'))
   }
-  updateEntry(requestData: BackendRequest<BackendDBEntryData>): Array<string> {
-    return [this.updateRow(requestData)]
+  updateLoadEntry(requestData: BackendRequest<BackendDBLoadEntryData>): string {
+    return this.updateRow(requestData)
   }
 
 }

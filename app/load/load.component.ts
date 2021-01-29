@@ -6,6 +6,10 @@ import { LoadService } from 'src/app/services/load.service';
 import { LoadEntryFullData } from 'src/app/models/load-entry-full-data.public';
 import { appData } from 'src/app/data/app';
 import { ConfirmDialogComponent } from 'src/app/mat/confirm-dialog/confirm-dialog.component';
+import { SettingsService } from 'src/app/services/settings.service';
+import { SettingsListData } from 'src/app/models/settings-list-data.system';
+import { UnitsSystems } from 'src/app/models/units.system';
+import { UtilityService } from 'src/app/services/utility.service';
 
 @Component({
   selector: 'app-load',
@@ -18,16 +22,25 @@ export class LoadComponent implements OnInit {
   loadInStorageStatusId: string = '1'
   showLoad: boolean = false
   showErrorMessage: boolean = false
-  staticData: any = appData.load
+  staticData = appData.load
+  units: UnitsSystems = UtilityService.uniqueCopy(appData.units)
+  settings: SettingsListData
 
   constructor(
     public dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
+    private settingsService: SettingsService,
     private loadService: LoadService
   ) { }
 
   ngOnInit(): void {
+    this.settingsService.readSettings(
+      (settingsData: SettingsListData) => {
+        this.settings = settingsData
+      }
+    )
+
     this.route.paramMap.subscribe(params => {
       this.loadId = params.get('loadId')
       this.readLoad()

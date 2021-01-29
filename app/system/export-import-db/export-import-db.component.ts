@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 
 import { appData } from 'src/app/data/app';
+import { ConfirmDialogComponent } from 'src/app/mat/confirm-dialog/confirm-dialog.component';
 import { CommandService } from 'src/app/services/command.service';
+import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
   selector: 'app-export-import-db',
@@ -10,7 +13,7 @@ import { CommandService } from 'src/app/services/command.service';
   styleUrls: ['./export-import-db.component.scss']
 })
 export class ExportImportDbComponent implements OnInit {
-  staticData: any = appData.systemDb
+  staticData = appData.systemDb
   exportFileName: string = ''
   importFileName: string = ''
   importFile: File
@@ -22,7 +25,11 @@ export class ExportImportDbComponent implements OnInit {
 
   formImport: FormGroup
 
-  constructor(private commandService: CommandService) { }
+  constructor(
+    public dialog: MatDialog,
+    private commandService: CommandService,
+    private settingsService: SettingsService
+  ) { }
 
   ngOnInit(): void {
     let scope: ExportImportDbComponent = this
@@ -97,6 +104,32 @@ export class ExportImportDbComponent implements OnInit {
           options: { dump }
         }
       )
+    })
+  }
+  resetDb(): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '80%',
+      data: {
+        header: this.staticData.resetConfirmHeader,
+        text: this.staticData.resetConfirmText,
+        bttnCancel: this.staticData.resetConfirmCancel,
+        bttnOk: this.staticData.resetConfirmOk,
+        handler: () => {
+          this.commandService.execCommand(
+            (isReset: boolean) => {
+              if (isReset) {
+                dialogRef.close()
+                this.settingsService.clearSettings()
+              }
+            },
+            CommandService.DATA_TYPE_DB,
+            {
+              command: CommandService.COMMAND_RESET,
+              options: null
+            }
+          )
+        }
+      }
     })
   }
 

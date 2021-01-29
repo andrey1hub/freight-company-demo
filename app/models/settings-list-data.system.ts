@@ -1,4 +1,5 @@
 import { OptionItemData } from './option-item-data.system';
+import { SettingEntryData } from './setting-entry-data.public';
 
 export interface SettingsListData {
   currentDepartment: OptionItemData
@@ -8,5 +9,5 @@ export interface SettingsListData {
   keepFilterHistory: boolean
   loadsNavButtons: boolean
   showLoadsFilter: boolean
-  firstRunOfApp?: string
+  firstRunOfApp?: Array<SettingEntryData> | string
 }

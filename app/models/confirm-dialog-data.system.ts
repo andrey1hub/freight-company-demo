@@ -1,6 +1,6 @@
 export interface ConfirmDialogData {
   header: string
-  text: string
+  text: Array<string>
   bttnCancel: string
   bttnOk: string
   handler: Function

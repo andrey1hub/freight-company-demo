@@ -10,7 +10,7 @@ import { UtilityService } from 'src/app/services/utility.service';
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent {
-  menu: MenuBundle = UtilityService.buildMenu(appMenu)
+  menu: MenuBundle = UtilityService.buildMenu(UtilityService.uniqueCopy(appMenu))
 
   constructor() { }
 

@@ -1,3 +1,8 @@
+<div *ngIf="settings?.firstRunOfApp" class="container-xl pt-2">
+  <h5>{{ staticData.firstRunText[0] + appName + ' ' + appVersion }}</h5>
+  <p>{{ staticData.firstRunText[1] + appName + staticData.firstRunText[2] }}</p>
+  <p>{{ staticData.firstRunText[3] }}</p>
+</div>
 <h3>{{ staticData.header }}</h3>
 <div class="container-xl page-controls">
   <i class="icon-container material-icons-round border border-secondary rounded" (click)="menuShowToggle()">

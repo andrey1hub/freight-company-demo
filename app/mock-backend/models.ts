@@ -2,6 +2,13 @@
 export interface BackendData<T> {
   data: T
 }
+export interface BackendOptionsData {
+  unitsSystems: Array<BackendOptionData>
+  departments: Array<BackendOptionData>
+  services: Array<BackendOptionData>
+  packagings: Array<BackendOptionData>
+  statuses: Array<BackendOptionData>
+}
 export interface BackendOptionData {
   id: string
   title: string
@@ -15,12 +22,10 @@ export interface BackendSortHandlers {
 export interface BackendDbSchema {
   settings: Array<string>
   load: Array<string>
-  DB_REVISION: string
 }
 export interface BackendDbDump {
   settings: Array<BackendDBSettingsEntryData>
   load: Array<BackendDBLoadEntryData>
-  DB_REVISION: number
 }
 export interface BackendDBEntryData {
   id: string
@@ -63,9 +68,6 @@ export interface BackendRequestCommandOptions {
 }
 /* RESPONSE */
 /* entry */
-export interface BackendResponseEntry<T> extends BackendData<T> {
-  id: string
-}
 export interface BackendResponseLoadEntryData extends BackendDBEntryData {
   formed: string
   status: string | BackendOptionData
@@ -79,11 +81,7 @@ export interface BackendResponseLoadEntryData extends BackendDBEntryData {
   weight?: string
   width?: string
 }
-/* collection */
-export interface BackendResponseCollection<T> extends BackendData<T> {
-  type: string
-}
-/* SUMMARY */
+/* summary */
 export interface BackendResponseLoadSummaryData {
   totalRecords: number
   totalInStorage: number

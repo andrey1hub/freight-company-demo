@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
-import { UtilityService } from './services/utility.service';
+import { appData } from './data/app';
 
 @Component({
   selector: 'app-root',
@@ -9,9 +9,9 @@ import { UtilityService } from './services/utility.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  constructor(private titleService: Title) {}
+  constructor(private titleService: Title) { }
 
   ngOnInit() {
-    this.titleService.setTitle(UtilityService.APP_NAME.concat(' ').concat(UtilityService.APP_VERSION))
+    this.titleService.setTitle(appData.appName + ' ' + appData.appVersion)
   }
 }

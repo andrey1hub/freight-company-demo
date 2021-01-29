@@ -1,6 +1,6 @@
-<h3>{{ loadId ? staticData.edit.header.concat(loadId) : staticData.new.header }}</h3>
+<h3>{{ loadId ? staticData.edit.header : staticData.new.header }}<a *ngIf="loadId" routerLink="/loads/{{ loadId }}">{{ loadId }}</a></h3>
 <form [formGroup]="form" (ngSubmit)="onFormSubmit()">
-  <div class="container-xl">
+  <div class="container-xl pt-2">
     <div *ngIf="showErrorMessage" class="alert alert-danger border border-danger app-row">
       <h5 class="mb-0">
         <span class="text-nowrap">{{ staticData.edit.errMessage[0].concat(loadId) }}</span>

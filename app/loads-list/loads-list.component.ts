@@ -14,7 +14,7 @@ export class LoadsListComponent implements OnInit {
   loads: Array<LoadEntryFullData>
   loadInStorageStatusId: string = '1'
   loadsHandler: Function = (loadsData: Array<LoadEntryFullData>) => { this.loads = loadsData }
-  staticData: any = appData.loadsList
+  staticData = appData.loadsList
 
   constructor(private loadService: LoadService) { }
 

@@ -1,11 +1,12 @@
 import { AbstractRequest } from './abstract-request';
 import { DatabaseService } from './database.service';
-import { BackendRequestCommandOptions, BackendDbDump, BackendDBLoadEntryData, BackendRequestCommandData, BackendRequest, BackendResponseCollection, BackendDBSettingsEntryData } from './models';
+import { BackendRequestCommandOptions, BackendDbDump, BackendDBLoadEntryData, BackendRequestCommandData, BackendRequest, BackendDBSettingsEntryData, BackendOptionsData, BackendData } from './models';
 import { options } from 'src/app/data/options';
 import { CreateRequest } from './create-request';
 import { ReadRequest } from './read-request';
 
 export class ExeccommRequest extends AbstractRequest {
+  private optionsData: BackendOptionsData = AbstractRequest.unique(options)
 
   constructor(private dbService: DatabaseService) {
     super()
@@ -32,16 +33,16 @@ export class ExeccommRequest extends AbstractRequest {
     let dbIdPrefix: string = commandOptions.dbIdPrefix || 'demo'
     let collection: Array<BackendDBLoadEntryData> = []
     let ids: Array<string> = []
-    let settingsFromDB: BackendResponseCollection<Array<BackendDBSettingsEntryData>> = (new ReadRequest(this.dbService)).readSettingsCollection({ action: 'read', type: 'settings', entity: 'collection', data: null })
+    let settingsFromDB: BackendData<Array<BackendDBSettingsEntryData>> = (new ReadRequest(this.dbService)).readSettingsCollection({ action: 'read', type: 'settings', entity: 'collection', data: null })
     let currentDepartment: string = settingsFromDB.data.find(item => item.property === 'currentDepartment').value
 
     for (let i = 0; i < quantity; i++) {
-      let fromDepartment: string = AbstractRequest.randomItemOfStackPicker(options.departments).id
+      let fromDepartment: string = AbstractRequest.randomItemOfStackPicker(this.optionsData.departments).id
       let toDepartment: string
       let entry: any
 
       if (fromDepartment === currentDepartment) {
-        toDepartment = AbstractRequest.randomItemOfStackPicker(options.departments).id
+        toDepartment = AbstractRequest.randomItemOfStackPicker(this.optionsData.departments).id
       } else {
         toDepartment = currentDepartment
       }
@@ -51,8 +52,8 @@ export class ExeccommRequest extends AbstractRequest {
         formed: '' + (formedSpanStart.getTime() + AbstractRequest.randomItemOfStackPicker(formedSpanEnd.getTime() - formedSpanStart.getTime())),
         fromDepartment: fromDepartment,
         toDepartment: toDepartment,
-        packaging: AbstractRequest.randomItemOfStackPicker(options.packagings).id,
-        service: AbstractRequest.randomItemOfStackPicker(options.services).id,
+        packaging: AbstractRequest.randomItemOfStackPicker(this.optionsData.packagings).id,
+        service: AbstractRequest.randomItemOfStackPicker(this.optionsData.services).id,
         declaredCost: '' + AbstractRequest.randomItemOfStackPicker(100000),
         height: '' + AbstractRequest.randomItemOfStackPicker(1000),
         length: '' + AbstractRequest.randomItemOfStackPicker(1000),
@@ -61,7 +62,7 @@ export class ExeccommRequest extends AbstractRequest {
       }
       collection.push(entry)
     }
-    ids = (new CreateRequest(this.dbService)).createRowsList(type, collection, dbIdPrefix, 'formed').map(item => item.id)
+    ids = (new CreateRequest(this.dbService)).createRowsList(type, collection, dbIdPrefix, 'formed')
 
     return ids.length === collection.length
   }
@@ -70,7 +71,16 @@ export class ExeccommRequest extends AbstractRequest {
     return 'fcdemo-db-revision-' + DatabaseService.DB_REVISION + '-' + date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + '-' + AbstractRequest.mockUIDGenerator() + '.json'
   }
   processDumpDbComm(requestData: BackendRequest<BackendRequestCommandData>): boolean | string {
-    let dbDump: BackendDbDump = this.dbService.dumpDb()
+    let dbDump: any = {}
+
+    Object.keys(DatabaseService.DB_SCHEMA).filter(key => key !== 'settings').forEach(key => {
+      let raw: string = this.dbService.readDBTable(key)
+
+      if (raw) {
+        dbDump[key] = JSON.parse(raw)
+      }
+    })
+
     return DatabaseService.checkDbSchema(dbDump) && JSON.stringify(dbDump)
   }
   processRestoreDbComm(requestData: BackendRequest<BackendRequestCommandData>): boolean {
@@ -85,13 +95,19 @@ export class ExeccommRequest extends AbstractRequest {
       parseError = true
     }
 
-    if (!parseError && parsed.DB_REVISION && parsed.DB_REVISION === DatabaseService.DB_REVISION && DatabaseService.checkDbSchema(parsed)) {
-      Object.keys(DatabaseService.DB_SCHEMA).forEach(key => {
+    if (!parseError && DatabaseService.checkDbSchema(parsed)) {
+      Object.keys(DatabaseService.DB_SCHEMA).filter(key => key !== 'settings').forEach(key => {
         this.dbService.updateDBTable(key, JSON.stringify(parsed[key]))
       })
       result = true
     }
     return result
+  }
+  processResetDbComm(requestData: BackendRequest<BackendRequestCommandData>): boolean {
+    Object.keys(DatabaseService.DB_SCHEMA).forEach(key => {
+      this.dbService.updateDBTable(key, '')
+    })
+    return true
   }
 
 }

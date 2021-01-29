@@ -1,12 +1,7 @@
-<div *ngIf="mainData?.firstRunOfApp" class="container-xl pt-2">
-  <h5>{{ staticData.firstRunText[0].concat(appName).concat(' ').concat(appVersion) }}</h5>
-  <p>{{ staticData.firstRunText[1].concat(appName).concat(staticData.firstRunText[2]) }}</p>
-  <p>{{ staticData.firstRunText[3] }}</p>
-</div>
 <h3>{{ staticData.header }}</h3>
 <div class="container-xl pt-2">
   <div *ngFor="let row of mainTextItemsData" class="row">
-    <app-main-item *ngFor="let item of row" class="{{ item.classes }}" label="{{ item.label }}" value="{{ mainData && (item.hasTitle && (mainData[item.valueId] | title) || mainData[item.valueId]) }}" units="{{ item.units }}" supSign="{{ item.supSign }}"></app-main-item>
+    <app-main-item *ngFor="let item of row" class="{{ item.classes }}" [data]="item" value="{{ mainData && (item.hasTitle && (mainData[item.valueId] | title) || mainData[item.valueId]) }}" units="{{ mainData && mainData.unitsSystem && item.unitsType && unitsData[mainData.unitsSystem.id][item.unitsType] }}"></app-main-item>
   </div>
   <div class="row">
     <app-main-item-selectable *ngFor="let item of mainSelectableItemsData" class="col-sm-4 mb-2" label="{{ item.label }}" [values]="mainData && mainData[item.valuesId]" [options]="mainData && mainData[item.optionsId]"></app-main-item-selectable>

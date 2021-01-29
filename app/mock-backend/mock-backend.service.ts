@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subscriber } from 'rxjs';
 
-import { BackendData, BackendDBEntryData, BackendRequest, BackendRequestCommandData, BackendResponseLoadSummaryData } from './models';
+import { BackendData, BackendDBEntryData, BackendDBSettingsEntryData, BackendRequest, BackendRequestCommandData, BackendResponseLoadEntryData, BackendResponseLoadSummaryData } from './models';
 import { DatabaseService } from './database.service';
 import { ExeccommRequest } from './execcomm-request';
 import { CreateRequest } from './create-request';
@@ -18,8 +18,8 @@ export class MockBackendService {
   constructor(private dbService: DatabaseService) { }
 
   mockRequest(
-    subscriber: Subscriber<BackendData<BackendDBEntryData | Array<BackendDBEntryData> | BackendResponseLoadSummaryData> | Array<string> | string | boolean>,
-    requestData: BackendRequest<BackendDBEntryData | Array<BackendDBEntryData> | BackendRequestCommandData | null>
+    subscriber: Subscriber<BackendData<BackendResponseLoadEntryData | Array<BackendDBEntryData> | BackendResponseLoadSummaryData> | Array<string> | string | boolean>,
+    requestData: BackendRequest<BackendDBEntryData | Array<BackendDBSettingsEntryData> | BackendRequestCommandData | null>
   ): void {
     let action: Function
 

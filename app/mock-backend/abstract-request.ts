@@ -1,4 +1,4 @@
-import { BackendDBEntryData, BackendRequest, BackendRequestCommandData, BackendData, BackendResponseLoadSummaryData } from './models';
+import { BackendDBEntryData, BackendRequest, BackendRequestCommandData, BackendData, BackendResponseLoadSummaryData, BackendDBSettingsEntryData, BackendResponseLoadEntryData } from './models';
 
 export abstract class AbstractRequest {
   static ACTION_EXECCOMM: string = 'execcomm'
@@ -29,7 +29,7 @@ export abstract class AbstractRequest {
 
   abstract getProcessorName(requestData: BackendRequest<BackendDBEntryData | Array<BackendDBEntryData> | BackendRequestCommandData | null>): string
 
-  process(requestData: BackendRequest<BackendDBEntryData | Array<BackendDBEntryData> | BackendRequestCommandData | null>): BackendData<BackendDBEntryData | Array<BackendDBEntryData> | BackendResponseLoadSummaryData> | Array<string> | string | boolean {
+  process(requestData: BackendRequest<BackendDBEntryData | Array<BackendDBSettingsEntryData> | BackendRequestCommandData | null>): BackendData<BackendResponseLoadEntryData | Array<BackendDBEntryData> | BackendResponseLoadSummaryData> | Array<string> | string | boolean {
     let processorName: string = this.getProcessorName(requestData)
     return this[processorName] && typeof this[processorName] === 'function' && this[processorName](requestData)
   }

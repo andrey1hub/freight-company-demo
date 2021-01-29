@@ -1,21 +1,29 @@
 <h5 class="sub-header pt-2">{{ staticData.header }}</h5>
-<form [formGroup]="form" (ngSubmit)="onFormSubmit()">
+<form [ngStyle]="{ 'display': settings ? 'block' : 'none' }" [formGroup]="form" (ngSubmit)="onFormSubmit()">
   <div class="container-xl">
-    <div *ngIf="showSuccessMessage" class="alert alert-success border border-success text-success app-row text-center">{{ staticData.successMessage }}</div>
+    <div class="row">
+      <div class="col-12">
+        <div *ngIf="showSuccessSavedMsg || showSuccessSetupMsg" class="alert alert-success border border-success text-success app-row text-center">{{ showSuccessSavedMsg && staticData.successSavedMsg || showSuccessSetupMsg && staticData.successSetupMsg }}</div>
+        <div *ngIf="settings?.firstRunOfApp" class="alert alert-warning border border-warning app-row text-center">
+          <p>{{ staticData.firstRunMsg[0] }}</p>
+          <p class="mb-0">{{ staticData.firstRunMsg[1] }}</p>
+        </div>
+      </div>
+    </div>
     <div class="row">
       <app-item-select *ngFor="let item of selectsData" class="{{ item.classes }}" [data]="item" [stack]="options[item.stackId]" (controlOutputEvent)="addFormControl($event)"></app-item-select>
     </div>
-    <fieldset class="row border border-secondary rounded-lg mb-3">
+    <fieldset [ngStyle]="{ 'display' : settings?.firstRunOfApp && 'none' }" class="row border border-secondary rounded-lg mb-3">
       <legend>{{ groupLoads.label }}</legend>
       <app-item-checkbox *ngFor="let item of groupLoads.checkboxes" class="{{ item.classes }}" [data]="item" (controlOutputEvent)="addFormControl($event)"></app-item-checkbox>
     </fieldset>
-    <fieldset class="row border border-secondary rounded-lg mb-3">
+    <fieldset [ngStyle]="{ 'display' : settings?.firstRunOfApp && 'none' }" class="row border border-secondary rounded-lg mb-3">
       <legend>{{ groupLoadsFilter.label }}</legend>
       <app-item-checkbox *ngFor="let item of groupLoadsFilter.checkboxes" class="{{ item.classes }}" [data]="item" (controlOutputEvent)="addFormControl($event)"></app-item-checkbox>
       <app-item-range class="{{ groupLoadsFilter.historySizePicker.classes }}" [data]="groupLoadsFilter.historySizePicker"></app-item-range>
     </fieldset>
     <div class="w-50 pt-3 mx-auto">
-      <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">{{ staticData.bttnSubmit }}</button>
+      <button type="submit" [disabled]="!form.valid" class="btn btn-success btn-lg w-100">{{ settings?.firstRunOfApp ? staticData.bttnSet : staticData.bttnSave }}</button>
     </div>
   </div>
 </form>

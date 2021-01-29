@@ -1,19 +1,19 @@
 import { AbstractRequest } from './abstract-request';
-import { CreateRequest } from './create-request';
 import { DatabaseService } from './database.service';
-import { BackendDBEntryData, BackendDBLoadEntryData, BackendDBSettingsEntryData, BackendRequest, BackendOptionData, BackendResponseLoadEntryData, BackendData, BackendResponseCollection, BackendResponseEntry, BackendResponseLoadSummaryData } from './models';
+import { BackendDBEntryData, BackendDBLoadEntryData, BackendDBSettingsEntryData, BackendRequest, BackendOptionData, BackendResponseLoadEntryData, BackendData, BackendResponseLoadSummaryData, BackendOptionsData } from './models';
 import { initialSettings } from './initial-settings';
 import { options } from 'src/app/data/options';
 
 export class ReadRequest extends AbstractRequest {
+  private optionsData: BackendOptionsData = AbstractRequest.unique(options)
   private getLoadOptionsData(load: BackendDBLoadEntryData | BackendResponseLoadEntryData): BackendResponseLoadEntryData {
     return {
       ...load,
-      status: AbstractRequest.unique(options).statuses.find((item: BackendOptionData) => item.id === load.status),
-      fromDepartment: AbstractRequest.unique(options).departments.find((item: BackendOptionData) => item.id === load.fromDepartment),
-      toDepartment: AbstractRequest.unique(options).departments.find((item: BackendOptionData) => item.id === load.toDepartment),
-      service: AbstractRequest.unique(options).services.find((item: BackendOptionData) => item.id === load.service),
-      packaging: AbstractRequest.unique(options).packagings.find((item: BackendOptionData) => item.id === load.packaging)
+      status: this.optionsData.statuses.find((item: BackendOptionData) => item.id === load.status),
+      fromDepartment: this.optionsData.departments.find((item: BackendOptionData) => item.id === load.fromDepartment),
+      toDepartment: this.optionsData.departments.find((item: BackendOptionData) => item.id === load.toDepartment),
+      service: this.optionsData.services.find((item: BackendOptionData) => item.id === load.service),
+      packaging: this.optionsData.packagings.find((item: BackendOptionData) => item.id === load.packaging)
     }
   }
 
@@ -38,14 +38,14 @@ export class ReadRequest extends AbstractRequest {
     }
     return entry
   }
-  readSettingsCollection(requestData: BackendRequest<null>): BackendResponseCollection<Array<BackendDBSettingsEntryData>> {
+  readSettingsCollection(requestData: BackendRequest<null>): BackendData<Array<BackendDBSettingsEntryData>> {
     let raw: string = this.dbService.readDBTable(requestData.type)
     let parsed: Array<BackendDBSettingsEntryData>
 
     if (raw) {
       parsed = JSON.parse(raw)
     } else {
-      parsed = (new CreateRequest(this.dbService)).createRowsList(requestData.type, initialSettings) as Array<BackendDBSettingsEntryData>
+      parsed = AbstractRequest.unique(initialSettings)
       parsed.push({
         id: '',
         property: 'firstRunOfApp',
@@ -55,11 +55,10 @@ export class ReadRequest extends AbstractRequest {
       })
     }
     return {
-      type: requestData.type,
       data: parsed
     }
   }
-  readLoadCollection(requestData: BackendRequest<null>): BackendResponseCollection<Array<BackendResponseLoadEntryData>> {
+  readLoadCollection(requestData: BackendRequest<null>): BackendData<Array<BackendResponseLoadEntryData>> {
     let raw: string = this.dbService.readDBTable(requestData.type)
     let parsed: Array<BackendResponseLoadEntryData>
 
@@ -75,24 +74,21 @@ export class ReadRequest extends AbstractRequest {
       }))
     }
     return {
-      type: requestData.type,
       data: parsed || null
     }
   }
-  readLoadEntry(requestData: BackendRequest<BackendDBEntryData>): BackendResponseEntry<BackendResponseLoadEntryData> {
+  readLoadEntry(requestData: BackendRequest<BackendDBEntryData>): BackendData<BackendResponseLoadEntryData> {
     let entry: BackendDBLoadEntryData = this.readRow(requestData.type, requestData.data.id) as BackendDBLoadEntryData
     if (!entry) return {
-      id: null,
       data: null
     }
     return {
-      id: entry.id,
       data: this.getLoadOptionsData({ ...entry })
     }
   }
   readLoadSummary(requestData: BackendRequest<null>): BackendData<BackendResponseLoadSummaryData> {
     let raw: string = this.dbService.readDBTable(requestData.type)
-    let parsed: Array<BackendDBLoadEntryData> = JSON.parse(raw)
+    let parsed: Array<BackendDBLoadEntryData> = raw && JSON.parse(raw)
     let summary: any = {}
 
     summary.totalRecords = parsed && parsed.length || 0
