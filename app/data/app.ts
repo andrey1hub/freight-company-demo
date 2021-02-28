@@ -60,5 +60,9 @@ export const appData = {
     resetConfirmText: ['Are you sure you want to reset DB?', 'This action will clear all tables of the DB.', 'It is HIGHLY RECOMMENDED to back up (export) DB before doing this.'],
     resetConfirmCancel: 'Cancel',
     resetConfirmOk: 'Reset'
+  },
+  loadsNav: {
+    prevLabel: 'Previous Load',
+    nextLabel: 'Next Load'
   }
 }

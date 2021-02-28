@@ -17,10 +17,15 @@ export class UpdateRequest extends AbstractRequest {
   updateRow(requestData: BackendRequest<BackendDBEntryData>): string {
     let raw: string = this.dbService.readDBTable(requestData.type)
     let parsed: Array<BackendDBEntryData>
+    let entry = {} as BackendDBEntryData
 
-    parsed = JSON.parse(raw).map((item: BackendDBEntryData) =>
-      (item.id === requestData.data.id ? requestData.data : item)
-    )
+    DatabaseService.DB_SCHEMA[requestData.type].forEach((key: string) => {
+      if (typeof requestData.data[key] === 'string') {
+        entry[key] = requestData.data[key]
+      }
+    })
+
+    parsed = JSON.parse(raw).map((item: BackendDBEntryData) => item.id === entry.id ? entry : item)
     this.dbService.updateDBTable(requestData.type, JSON.stringify(parsed))
     return requestData.data.id
   }

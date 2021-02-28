@@ -35,6 +35,24 @@ export class EditLoadComponent implements OnInit {
   units: UnitsSystems = UtilityService.uniqueCopy(appData.units)
   showErrorMessage: boolean = false
 
+  private switchControls(enable?: boolean, stack?: Array<string>): void {
+    let action: string
+
+    if (!stack) {
+      stack = Object.keys(this.form.controls)
+    }
+
+    if (enable) {
+      action = 'enable'
+    } else {
+      action = 'disable'
+    }
+
+    stack.forEach(controlName =>
+      this.form.controls[controlName][action]()
+    )
+  }
+
   constructor(
     private settingsService: SettingsService,
     private loadService: LoadService,
@@ -60,7 +78,6 @@ export class EditLoadComponent implements OnInit {
             weight: '',
             declaredCost: ''
           })
-          this.form.removeControl('validityControl')
         }
 
         this.inputControlsData = this.inputControlsData.map(item => {
@@ -75,36 +92,38 @@ export class EditLoadComponent implements OnInit {
       }
     )
 
-    this.route.paramMap.subscribe(params => {
-      this.loadId = params.get('loadId')
-
-      this.setupForm()
-      if (this.loadId) this.readLoad()
-    })
-  }
-  setupForm() {
     /**
      * At Create New Load page FormGroup is instantiated empty and have valid = true state.
      * As FormControls get added from child Item...Components FormGroup's state changes to valid = false.
      * This behavior affects submit button's disabled state, which is considered by Angular as an error.
      * validityControl does nothing except making FormGroup invalid initially.
      * */
-    let initialFormState: any = { validityControl: new FormControl('', Validators.required) }
-    let updateLoadControls: any = {}
-
-    if (this.loadId) updateLoadControls = {
-      formed: new FormControl('', Validators.required)
-    }
-
     this.form = new FormGroup({
-      ...initialFormState,
-      ...updateLoadControls
+      validityControl: new FormControl('', Validators.required)
+    })
+
+    this.route.paramMap.subscribe(params => {
+      this.loadId = params.get('loadId')
+
+      if (this.loadId) {
+        if (!this.form.controls.formed) this.form.addControl('formed', new FormControl('', Validators.required))
+        this.readLoad()
+      }
     })
   }
   addFormControl(control: ItemFormControl) {
     this.form.addControl(control.name, control.instance)
 
-    if (control.name === 'fromDepartment' || control.name === 'toDepartment') this.addSelectToSync(control.instance)
+    switch (control.name) {
+      case 'fromDepartment':
+      case 'toDepartment':
+        this.addSelectToSync(control.instance)
+        break;
+
+      case 'status':
+        this.addStatusHandler(control.instance)
+        break;
+    }
   }
   addSelectToSync(select: FormControl): void {
     let scope: EditLoadComponent = this
@@ -113,12 +132,38 @@ export class EditLoadComponent implements OnInit {
 
     select.valueChanges.subscribe({
       next(newValue: string) {
-        if (newValue === scope.settings.currentDepartment.id) {
-          scope.departmentsSync.forEach(item => item.enable({ emitEvent: false }))
-        } else {
-          if (!otherSelect) otherSelect = scope.departmentsSync.find((item, itemIndex) => item && itemIndex !== index)
-          otherSelect.setValue(scope.settings.currentDepartment.id, { emitEvent: false })
-          otherSelect.disable({ emitEvent: false })
+        if (!scope.loadId || scope.form.controls.status?.value === '1') {
+          if (!otherSelect) {
+            otherSelect = scope.departmentsSync.find((item, itemIndex) => item && itemIndex !== index)
+          }
+          if (newValue === scope.settings.currentDepartment.id) {
+            if (otherSelect.disabled) otherSelect.enable({ emitEvent: false })
+          } else {
+            otherSelect.setValue(scope.settings.currentDepartment.id, { emitEvent: false })
+            if (!otherSelect.disabled) otherSelect.disable({ emitEvent: false })
+          }
+        }
+      }
+    })
+  }
+  addStatusHandler(select: FormControl): void {
+    let scope: EditLoadComponent = this
+    let stack: Array<string>
+    let stackId: string
+
+    select.valueChanges.subscribe({
+      next(newValue: string) {
+        if (newValue === '0') {
+          stack = Object.keys(scope.form.controls).filter(key => key !== 'status' && scope.form.controls[key].enabled)
+          stackId = scope.loadId
+        }
+        if (stack && stackId) {
+          if (stackId === scope.loadId) {
+            scope.switchControls(newValue === '1', stack)
+          } else {
+            stack = undefined
+            stackId = undefined
+          }
         }
       }
     })
@@ -142,8 +187,6 @@ export class EditLoadComponent implements OnInit {
     this.loadService.readLoad(
       (loadData: LoadEntryFullData) => {
         if (loadData) {
-          let controlsToDisable: Array<string>
-
           this.form.setValue({
             validityControl: 'done',
             status: loadData.status.id,
@@ -158,30 +201,17 @@ export class EditLoadComponent implements OnInit {
             weight: loadData.weight,
             declaredCost: loadData.declaredCost
           })
-          this.form.removeControl('validityControl')
 
           switch (loadData.status.id) {
             case '0':
-              controlsToDisable = Object.keys(this.form.controls)
+              this.switchControls()
               break;
 
             case '1':
-              controlsToDisable = ['length', 'width', 'height', 'weight']
-
-              if (loadData.fromDepartment.id === this.settings.currentDepartment.id) {
-                if (loadData.toDepartment.id !== this.settings.currentDepartment.id) controlsToDisable.push('fromDepartment')
-              } else {
-                controlsToDisable.push('toDepartment')
-              }
-              break;
-
-            default:
+              this.switchControls(false, ['length', 'width', 'height', 'weight'])
+              this.switchControls(true, ['status', 'service', 'packaging', 'declaredCost'])
               break;
           }
-
-          controlsToDisable.forEach(controlName =>
-            this.form.controls[controlName].disable()
-          )
         } else {
           Object.keys(this.form.controls).forEach(controlName =>
             this.form.controls[controlName].reset({ value: '', disabled: true })

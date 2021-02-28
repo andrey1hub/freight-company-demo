@@ -52,12 +52,15 @@ legend {
   display: inline-block;
   width: auto;
   max-width: none;
-  padding: 0 .5rem;
+  padding: 0 0.5rem;
   font-size: inherit;
 }
 .app-row {
   margin-right: -15px;
   margin-left: -15px;
+}
+.app-pr-5x2 {
+  padding-right: 6rem !important;
 }
 input.mat-input-element {
   margin-top: 0;
@@ -69,15 +72,20 @@ input.mat-input-element {
   }
   .icon-container {
     cursor: pointer;
+    background-color: #ffffff;
     position: absolute;
     top: -2.6rem;
     right: 0;
     height: 2.1rem;
     width: 2.1rem;
+    padding: 0;
     text-align: center;
     font-size: 32px;
-    &.clear {
+    &.icon-second {
       right: 2.6rem;
+    }
+    &:disabled {
+      cursor: default;
     }
   }
   .dropdown-menu {

@@ -21,6 +21,7 @@ export class CreateRequest extends AbstractRequest {
     let sortHandlers: BackendSortHandlers = {
       formed: (first: BackendDBLoadEntryData, second: BackendDBLoadEntryData) => parseInt(first.formed) - parseInt(second.formed)
     }
+    let entry = {} as BackendDBEntryData
 
     if (!raw) {
       parsed = []
@@ -29,7 +30,13 @@ export class CreateRequest extends AbstractRequest {
     }
     if (dbIdPrefix) id = dbIdPrefix.concat('_').concat(id)
 
-    parsed.push({ ...requestData.data, id })
+    DatabaseService.DB_SCHEMA[requestData.type].forEach((key: string) => {
+      if (typeof requestData.data[key] === 'string') {
+        entry[key] = requestData.data[key]
+      }
+    })
+
+    parsed.push({ ...entry, id })
 
     if (typeof sortType === 'string' &&
       typeof sortHandlers[sortType] === 'function') parsed.sort(sortHandlers[sortType])

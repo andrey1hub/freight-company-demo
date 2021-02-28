@@ -8,12 +8,16 @@ import { FilterLoadsData } from 'src/app/models/filter-loads-data.system';
 import { LoadEntryFullData } from 'src/app/models/load-entry-full-data.public';
 import { LoadsSummary } from 'src/app/models/loads-summary.public';
 import { Data } from 'src/app/models/data.public';
+import { EntryData } from 'src/app/models/entry-data.public';
+import { UtilityService } from './utility.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoadService extends AbstractStorageService {
   static SERVICE_DATA_TYPE: string = 'load'
+
+  private idsStorage: Array<string>
 
   constructor(private dataService: DataService) {
     super()
@@ -25,7 +29,7 @@ export class LoadService extends AbstractStorageService {
       handler
     )
   }
-  readLoad(handler: Function, data: { id: string }): void {
+  readLoad(handler: Function, data: EntryData): void {
     this.processRequest(
       this.dataService.readRequest(LoadService.SERVICE_DATA_TYPE, DataService.ENTITY_ENTRY, data),
       (response: Data<LoadEntryFullData>) => {
@@ -39,7 +43,7 @@ export class LoadService extends AbstractStorageService {
       handler
     )
   }
-  deleteLoad(handler: Function, data: { id: string }): void {
+  deleteLoad(handler: Function, data: EntryData): void {
     this.processRequest(
       this.dataService.deleteRequest(LoadService.SERVICE_DATA_TYPE, data),
       handler
@@ -51,6 +55,7 @@ export class LoadService extends AbstractStorageService {
       this.dataService.readRequest(LoadService.SERVICE_DATA_TYPE, DataService.ENTITY_COLLECTION, null),
       (response: Data<Array<LoadEntryFullData>>) => {
         this.setStorage(response.data)
+        this.idsStorage = response.data.map(entry => entry.id)
         handler(response.data)
       }
     )
@@ -70,22 +75,33 @@ export class LoadService extends AbstractStorageService {
 
       Object.keys(filter).forEach(key => {
         if (filter[key]) {
-          if (key !== 'id' && key !== 'formedAfter' && key !== 'formedBefore') {
-            checkStack.push(filter[key] === LoadsFilterService.FILTER_ANY_OPTION_ID || filter[key] === entry[key].id)
-          } else if (key === 'id') {
+          if (key === 'id') {
             checkStack.push(filter[key].toLowerCase() === entry[key].toLowerCase().substr(0, filter[key].length))
           } else if (key === 'formedAfter') {
             checkStack.push(filter[key].getTime() < parseInt(entry.formed))
           } else if (key === 'formedBefore') {
             // Make 23:59:59.999 of the given date to include it in filter scope
             checkStack.push((filter[key].getTime() + 24 * 60 * 60 * 1000 - 1) > parseInt(entry.formed))
+          } else {
+            checkStack.push(filter[key] === LoadsFilterService.FILTER_ANY_OPTION_ID || filter[key] === entry[key].id)
           }
         }
       })
 
-      return checkStack.every(check => check) && entry
+      return checkStack.every(check => check)
     })
 
+    this.idsStorage = filteredData.map(entry => entry.id)
     handler(filteredData)
   }
+  getLoadsIds(handler: Function): void {
+    if (this.idsStorage) {
+      handler(this.idsStorage)
+    } else {
+      this.readLoadsList(() => {
+        handler(this.idsStorage)
+      })
+    }
+  }
+
 }

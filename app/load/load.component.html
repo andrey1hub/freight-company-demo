@@ -1,7 +1,9 @@
-<h3>
-  <span class="text-nowrap">{{ staticData.header[0].concat(loadId) }}</span>
-  <span *ngIf="showErrorMessage" class="text-nowrap">{{ staticData.header[1] }}</span>
+<h3 class="app-pr-5x2">
+  <span class="text-nowrap d-inline-block mr-2">{{ staticData.header[0] }}</span>
+  <span class="text-nowrap d-inline-block mr-2">{{ loadId }}</span>
+  <span *ngIf="showErrorMessage" class="text-nowrap d-inline-block">{{ staticData.header[1] }}</span>
 </h3>
+<app-loads-nav [edit]="false"></app-loads-nav>
 <div class="pt-2">
   <div *ngIf="showLoad">
     <p>{{ staticData.formed.concat(load.formed | date: 'medium') }}</p>

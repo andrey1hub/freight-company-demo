@@ -27,6 +27,7 @@ import { ItemCheckboxComponent } from './items/item-checkbox/item-checkbox.compo
 import { ExportImportDbComponent } from './system/export-import-db/export-import-db.component';
 import { ConfirmDialogComponent } from './mat/confirm-dialog/confirm-dialog.component';
 import { ItemRangeComponent } from './items/item-range/item-range.component';
+import { LoadsNavComponent } from './loads-nav/loads-nav.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { ItemRangeComponent } from './items/item-range/item-range.component';
     ItemCheckboxComponent,
     ExportImportDbComponent,
     ConfirmDialogComponent,
-    ItemRangeComponent
+    ItemRangeComponent,
+    LoadsNavComponent
   ],
   imports: [
     BrowserModule,

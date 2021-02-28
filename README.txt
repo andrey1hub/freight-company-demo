@@ -1,4 +1,4 @@
-Freight Company Demo v1.8.0
+Freight Company Demo v1.9.0
 Software for logging income and outcome loads. There is no real backend and database. Backend part mocked by MockBackendService and localStorage used as DB.
 
 Used technologies:

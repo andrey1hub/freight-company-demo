@@ -11,7 +11,7 @@ export const settingsForm = {
     label: 'Loads',
     checkboxes: [
       {
-        disabled: true,
+        disabled: false,
         required: false,
         classes: 'col-6',
         rowClasses: 'mr-0',
@@ -19,7 +19,7 @@ export const settingsForm = {
         property: 'loadsNavButtons'
       },
       {
-        disabled: true,
+        disabled: false,
         required: false,
         classes: 'col-6',
         rowClasses: 'ml-0',
