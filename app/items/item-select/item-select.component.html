@@ -1,6 +1,7 @@
 <div class="row {{ data.rowClasses }}">
   <div class="{{ data.labelClasses || 'col-sm-4 px-0 pr-sm-3 pt-2' }}"><label for="select-{{ data.property }}">{{ data.label }}:</label></div>
   <div class="{{ data.inputClasses || 'col-sm-8 px-0' }}">
+    <app-default-value *ngIf="data.clearable" [controls]="[control]" [defaults]="[stack?.length && stack[0].id]"></app-default-value>
     <select class="form-control" [formControl]="control" id="select-{{ data.property }}">
       <option *ngFor="let item of stack" [ngValue]="item.id" value="{{ item.id }}">{{ item | title }}</option>
     </select>

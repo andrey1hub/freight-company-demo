@@ -13,12 +13,9 @@ export class DeleteRequest extends AbstractRequest {
   }
 
   deleteRow(requestData: BackendRequest<BackendDBEntryData>): boolean {
-    let raw: string = this.dbService.readDBTable(requestData.type)
-    let parsed: Array<BackendDBEntryData>
+    let parsed: Array<BackendDBEntryData> = this.dbService.readParsedDBTable(requestData.type)
 
-    parsed = JSON.parse(raw).filter((item: BackendDBEntryData) =>
-      (item.id === requestData.data.id ? false : item)
-    )
+    parsed = parsed.filter((item: BackendDBEntryData) => item.id !== requestData.data.id)
     this.dbService.updateDBTable(requestData.type, JSON.stringify(parsed))
     return true
   }

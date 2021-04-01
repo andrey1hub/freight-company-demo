@@ -1,6 +1,6 @@
 import { AbstractRequest } from './abstract-request';
 import { DatabaseService } from './database.service';
-import { BackendRequestCommandOptions, BackendDbDump, BackendDBLoadEntryData, BackendRequestCommandData, BackendRequest, BackendDBSettingsEntryData, BackendOptionsData, BackendData } from './models';
+import { BackendRequestCommandOptions, BackendDbDump, BackendDBLoadEntryData, BackendRequestCommandData, BackendRequest, BackendDBSettingsEntryData, BackendOptionsData, BackendData, BackendDBEntryData } from './models';
 import { options } from 'src/app/data/options';
 import { CreateRequest } from './create-request';
 import { ReadRequest } from './read-request';
@@ -74,10 +74,10 @@ export class ExeccommRequest extends AbstractRequest {
     let dbDump: any = {}
 
     Object.keys(DatabaseService.DB_SCHEMA).filter(key => key !== 'settings').forEach(key => {
-      let raw: string = this.dbService.readDBTable(key)
+      let parsed: Array<BackendDBEntryData> = this.dbService.readParsedDBTable(key)
 
-      if (raw) {
-        dbDump[key] = JSON.parse(raw)
+      if (parsed.length) {
+        dbDump[key] = parsed
       }
     })
 

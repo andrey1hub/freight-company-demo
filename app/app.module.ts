@@ -28,6 +28,7 @@ import { ExportImportDbComponent } from './system/export-import-db/export-import
 import { ConfirmDialogComponent } from './mat/confirm-dialog/confirm-dialog.component';
 import { ItemRangeComponent } from './items/item-range/item-range.component';
 import { LoadsNavComponent } from './loads-nav/loads-nav.component';
+import { DefaultValueComponent } from './items/default-value/default-value.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { LoadsNavComponent } from './loads-nav/loads-nav.component';
     ExportImportDbComponent,
     ConfirmDialogComponent,
     ItemRangeComponent,
-    LoadsNavComponent
+    LoadsNavComponent,
+    DefaultValueComponent
   ],
   imports: [
     BrowserModule,

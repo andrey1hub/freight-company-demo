@@ -27,7 +27,7 @@ export const initialSettings: Array<BackendDBSettingsEntryData> = [
     property: 'keepFilterQuery',
     modifier: 'checkbox',
     stackId: '',
-    value: '0'
+    value: '1'
   },
   {
     id: '',
@@ -48,13 +48,13 @@ export const initialSettings: Array<BackendDBSettingsEntryData> = [
     property: 'loadsNavButtons',
     modifier: 'checkbox',
     stackId: '',
-    value: '0'
+    value: '1'
   },
   {
     id: '',
     property: 'loadsNavHotkeys',
     modifier: 'checkbox',
     stackId: '',
-    value: '0'
+    value: '1'
   }
 ]

@@ -17,19 +17,27 @@ export class ItemDatepickerComponent implements OnInit {
   controlStart: FormControl
   controlEnd: FormControl
 
+  propertyStart: string
+  propertyEnd: string
+
   constructor() { }
 
   ngOnInit(): void {
-    this.controlStart = new FormControl('')
-    this.controlEnd = new FormControl('')
+    let props: Array<string> = this.data.property.split(',')
+
+    this.propertyStart = props[0]
+    this.propertyEnd = props[1]
+
+    this.controlStart = new FormControl(null)
+    this.controlEnd = new FormControl(null)
 
     this.controlOutputEvent.emit({
       instance: this.controlStart,
-      name: this.data.propertyStart
+      name: this.propertyStart
     })
     this.controlOutputEvent.emit({
       instance: this.controlEnd,
-      name: this.data.propertyEnd
+      name: this.propertyEnd
     })
   }
 

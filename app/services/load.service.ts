@@ -55,7 +55,7 @@ export class LoadService extends AbstractStorageService {
       this.dataService.readRequest(LoadService.SERVICE_DATA_TYPE, DataService.ENTITY_COLLECTION, null),
       (response: Data<Array<LoadEntryFullData>>) => {
         this.setStorage(response.data)
-        this.idsStorage = response.data.map(entry => entry.id)
+        this.idsStorage = response.data?.map(entry => entry.id)
         handler(response.data)
       }
     )

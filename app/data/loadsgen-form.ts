@@ -11,8 +11,6 @@ export const loadsgenForm = {
     classes: 'col-md-12',
     label: 'Formed span',
     property: 'formedSpanStart,formedSpanEnd',
-    propertyStart: 'formedSpanStart',
-    propertyEnd: 'formedSpanEnd',
     labelClasses: 'col-4 col-sm-3 col-md-2 px-0 pt-2',
     inputClasses: 'col-8 col-sm-9 col-md-10 px-0',
     inputStartClasses: 'col-sm-6 mb-1 mb-sm-0 px-0 pr-sm-2 float-sm-left',

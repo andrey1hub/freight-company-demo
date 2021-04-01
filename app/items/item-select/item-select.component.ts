@@ -30,7 +30,7 @@ export class ItemSelectComponent implements OnInit {
         disabled: true
       })
     } else {
-      this.control = new FormControl('', validators)
+      this.control = new FormControl(this.stack?.length && this.stack[0].id || '', validators)
     }
     this.controlOutputEvent.emit({
       instance: this.control,

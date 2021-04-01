@@ -3,6 +3,16 @@ import { Injectable } from '@angular/core';
 import { AbstractStorageService } from './abstract-storage.service';
 import { FilterLoadsData } from 'src/app/models/filter-loads-data.system';
 
+interface StoredFilterLoadsData {
+  formedAfter: string | Date
+  formedBefore: string | Date
+  fromDepartment: string
+  id: string
+  packaging: string
+  service: string
+  toDepartment: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -36,7 +46,7 @@ export class LoadsFilterService extends AbstractStorageService {
     }
   }
   saveFilterQuery(data: FilterLoadsData): void {
-    let history: Array<FilterLoadsData>
+    let history: Array<StoredFilterLoadsData>
 
     if (JSON.stringify(data) === JSON.stringify(LoadsFilterService.FILTER_DEFAULT_VALUE)) {
       this.defaultQuery = true
@@ -48,15 +58,25 @@ export class LoadsFilterService extends AbstractStorageService {
       this.defaultQuery = false
     }
   }
-  getFilterHistory(): Array<FilterLoadsData> {
+  getFilterHistory(): Array<StoredFilterLoadsData> {
     return this.getStorage() || []
   }
   getFilterQuery(index: number): FilterLoadsData {
-    let history: Array<FilterLoadsData> = this.getFilterHistory()
-    return history.length && index >= 0 && index < history.length && history[index] || null
+    let history: Array<StoredFilterLoadsData> = this.getFilterHistory()
+    return history.length && index >= 0 && index < history.length && this.storedDataToData(history[index]) || null
   }
   getLastFilterQuery(): FilterLoadsData {
     return !this.defaultQuery && this.getFilterQuery(0) || null
+  }
+
+  storedDataToData(data: StoredFilterLoadsData): FilterLoadsData {
+    if (typeof data.formedAfter === 'string') {
+      data.formedAfter = new Date(data.formedAfter)
+    }
+    if (typeof data.formedBefore === 'string') {
+      data.formedBefore = new Date(data.formedBefore)
+    }
+    return data as FilterLoadsData
   }
 
 }

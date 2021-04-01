@@ -28,11 +28,11 @@ export class LoadsNavComponent implements OnInit, OnDestroy {
     let route: Array<string> = ['loads']
 
     if (prev) {
-      if (this.loadIndex - 1 >= 0) {
+      if (this.loadIndex - 1 >= 0 && this.loadIndex < this.loadsIds.length) {
         route.push(this.loadsIds[this.loadIndex - 1])
       }
     } else {
-      if (this.loadIndex + 1 < this.loadsIds.length) {
+      if (this.loadIndex + 1 < this.loadsIds.length && this.loadIndex >= 0) {
         route.push(this.loadsIds[this.loadIndex + 1])
       }
     }

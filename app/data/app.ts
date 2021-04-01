@@ -1,6 +1,6 @@
 export const appData = {
   appName: 'Freight Company Demo',
-  appVersion: 'v1.8.0',
+  appVersion: 'v1.10.0',
   units: {
     cmkg: {
       length: 'cm',

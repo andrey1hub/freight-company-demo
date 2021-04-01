@@ -40,6 +40,19 @@ export class DatabaseService {
   readDBTable(name: string): string {
     return this.db.getItem(name)
   }
+  readParsedDBTable(name: string): Array<BackendDBEntryData> {
+    let raw: string = this.readDBTable(name)
+    let parsed: Array<BackendDBEntryData>
+
+    if (name === 'DB_REVISION') return null
+    if (raw) {
+      parsed = JSON.parse(raw)
+    } else {
+      parsed = []
+    }
+
+    return parsed
+  }
   updateDBTable(name: string, stringified: string): void {
     this.db.setItem(name, stringified)
   }

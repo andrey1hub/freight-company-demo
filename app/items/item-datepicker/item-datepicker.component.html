@@ -1,14 +1,16 @@
 <div class="row">
-  <div class="{{ data.labelClasses }}"><label for="input-{{ data.propertyStart }}">{{ data.label }}:</label></div>
+  <div class="{{ data.labelClasses }}"><label for="input-{{ propertyStart }}">{{ data.label }}:</label></div>
   <div class="{{ data.inputClasses }} d-none" [class.d-md-block]="data.foldable">
+    <app-default-value *ngIf="data.clearable" [controls]="[controlStart, controlEnd]" [defaults]="[null, null]"></app-default-value>
     <div class="folded">
       <span (click)="pickerStart.open()">{{ controlStart.value?.toLocaleDateString && controlStart.value.toLocaleDateString() || data.placeHolderStart }}</span>
       <span (click)="pickerEnd.open()">{{ controlEnd.value?.toLocaleDateString && controlEnd.value.toLocaleDateString() || data.placeHolderEnd }}</span>
     </div>
   </div>
   <div class="{{ data.inputClasses }}" [class.d-md-none]="data.foldable">
+    <app-default-value *ngIf="data.clearable" [controls]="[controlStart, controlEnd]" [defaults]="[null, null]"></app-default-value>
     <div class="{{ data.inputStartClasses }}">
-      <input type="text" class="form-control" [class.is-invalid]="controlStart.invalid" [formControl]="controlStart" [matDatepicker]="pickerStart" [max]="controlEnd.value?.getDate && controlEnd.value" id="input-{{ data.propertyStart }}" placeholder="{{ data.placeHolderStart }}" (click)="pickerStart.open()">
+      <input type="text" class="form-control" [class.is-invalid]="controlStart.invalid" [formControl]="controlStart" [matDatepicker]="pickerStart" [max]="controlEnd.value?.getDate && controlEnd.value" id="input-{{ propertyStart }}" placeholder="{{ data.placeHolderStart }}" (click)="pickerStart.open()">
       <mat-datepicker touchUi #pickerStart></mat-datepicker>
     </div>
     <div class="{{ data.inputEndClasses }}">

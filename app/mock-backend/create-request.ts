@@ -15,19 +15,13 @@ export class CreateRequest extends AbstractRequest {
   }
 
   createRow(requestData: BackendRequest<BackendDBEntryData>, dbIdPrefix?: string, sortType?: string): string {
-    let raw: string = this.dbService.readDBTable(requestData.type)
-    let parsed: Array<BackendDBEntryData>
+    let parsed: Array<BackendDBEntryData> = this.dbService.readParsedDBTable(requestData.type)
     let id: string = AbstractRequest.mockUIDGenerator()
     let sortHandlers: BackendSortHandlers = {
       formed: (first: BackendDBLoadEntryData, second: BackendDBLoadEntryData) => parseInt(first.formed) - parseInt(second.formed)
     }
     let entry = {} as BackendDBEntryData
 
-    if (!raw) {
-      parsed = []
-    } else {
-      parsed = JSON.parse(raw)
-    }
     if (dbIdPrefix) id = dbIdPrefix.concat('_').concat(id)
 
     DatabaseService.DB_SCHEMA[requestData.type].forEach((key: string) => {

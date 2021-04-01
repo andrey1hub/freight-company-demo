@@ -1,4 +1,4 @@
 <div *ngIf="settings?.loadsNavButtons && loadsIds" class="container-xl page-controls">
-  <button [disabled]="loadIndex - 1 < 0" title="{{ staticData.prevLabel }}" class="icon-container icon-second material-icons-round border border-secondary rounded" (click)="goToPrevLoad()">&#xe5cb;</button>
-  <button [disabled]="loadIndex + 1 === loadsIds.length" title="{{ staticData.nextLabel }}" class="icon-container material-icons-round border border-secondary rounded" (click)="goToNextLoad()">&#xe5cc;</button>
+  <button [disabled]="loadIndex - 1 < 0 || loadIndex >= loadsIds.length" title="{{ staticData.prevLabel }}" class="icon-container icon-second material-icons-round border border-secondary rounded" (click)="goToPrevLoad()">&#xe5cb;</button>
+  <button [disabled]="loadIndex + 1 >= loadsIds.length || loadIndex < 0" title="{{ staticData.nextLabel }}" class="icon-container material-icons-round border border-secondary rounded" (click)="goToNextLoad()">&#xe5cc;</button>
 </div>

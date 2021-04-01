@@ -28,23 +28,12 @@ export class ReadRequest extends AbstractRequest {
   }
 
   readRow(table: string, id: string): BackendDBEntryData {
-    let raw: string = this.dbService.readDBTable(table)
-    let parsed: Array<BackendDBEntryData>
-    let entry: BackendDBEntryData
-
-    if (raw) {
-      parsed = JSON.parse(raw)
-      entry = parsed.find(item => item.id === id)
-    }
-    return entry
+    return this.dbService.readParsedDBTable(table).find(item => item.id === id)
   }
   readSettingsCollection(requestData: BackendRequest<null>): BackendData<Array<BackendDBSettingsEntryData>> {
-    let raw: string = this.dbService.readDBTable(requestData.type)
-    let parsed: Array<BackendDBSettingsEntryData>
+    let parsed = this.dbService.readParsedDBTable(requestData.type) as Array<BackendDBSettingsEntryData>
 
-    if (raw) {
-      parsed = JSON.parse(raw)
-    } else {
+    if (!parsed.length) {
       parsed = AbstractRequest.unique(initialSettings)
       parsed.push({
         id: '',
@@ -59,22 +48,19 @@ export class ReadRequest extends AbstractRequest {
     }
   }
   readLoadCollection(requestData: BackendRequest<null>): BackendData<Array<BackendResponseLoadEntryData>> {
-    let raw: string = this.dbService.readDBTable(requestData.type)
-    let parsed: Array<BackendResponseLoadEntryData>
+    let parsed = this.dbService.readParsedDBTable(requestData.type) as Array<BackendResponseLoadEntryData>
 
-    if (raw) {
-      parsed = JSON.parse(raw).map((entry: BackendDBLoadEntryData) => this.getLoadOptionsData({
-        id: entry.id,
-        formed: entry.formed,
-        status: entry.status,
-        fromDepartment: entry.fromDepartment,
-        toDepartment: entry.toDepartment,
-        service: entry.service,
-        packaging: entry.packaging
-      }))
-    }
+    parsed = parsed.map((entry: BackendDBLoadEntryData) => this.getLoadOptionsData({
+      id: entry.id,
+      formed: entry.formed,
+      status: entry.status,
+      fromDepartment: entry.fromDepartment,
+      toDepartment: entry.toDepartment,
+      service: entry.service,
+      packaging: entry.packaging
+    }))
     return {
-      data: parsed || null
+      data: parsed.length && parsed || null
     }
   }
   readLoadEntry(requestData: BackendRequest<BackendDBEntryData>): BackendData<BackendResponseLoadEntryData> {
@@ -87,18 +73,17 @@ export class ReadRequest extends AbstractRequest {
     }
   }
   readLoadSummary(requestData: BackendRequest<null>): BackendData<BackendResponseLoadSummaryData> {
-    let raw: string = this.dbService.readDBTable(requestData.type)
-    let parsed: Array<BackendDBLoadEntryData> = raw && JSON.parse(raw)
+    let parsed = this.dbService.readParsedDBTable(requestData.type) as Array<BackendDBLoadEntryData>
     let summary: any = {}
 
-    summary.totalRecords = parsed && parsed.length || 0
+    summary.totalRecords = parsed.length
     summary.totalInStorage = 0
     summary.totalWeight = 0
     summary.totalVolume = 0
     summary.totalByDepartment = {}
     summary.totalByService = {}
     summary.totalByPackaging = {}
-    if (parsed && parsed.length) {
+    if (parsed.length) {
       parsed.forEach(entry => {
         if (entry.status === '1') {
           summary.totalInStorage++

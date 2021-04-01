@@ -3,6 +3,7 @@
     <label class="text-muted" for="input-{{ data.property }}">{{ data.label }}:</label>
   </div>
   <div class="{{ data.inputClasses }}">
+    <app-default-value *ngIf="data.clearable" [controls]="[control]" [defaults]="['']"></app-default-value>
     <input type="text" class="form-control text-center" id="input-{{ data.property }}" [disabled]="data.disabled">
   </div>
 </div>
